@@ -34,7 +34,6 @@ public class CellGroupColorPalette : ScriptableObject
 
     public Color GetColor(CellGroup group)
     {
-        // Lazy-load le dictionnaire au premier appel
         if (lookup == null || lookup.Count != groupColors.Count)
         {
             lookup = new Dictionary<CellGroup, Color>();
@@ -46,6 +45,11 @@ public class CellGroupColorPalette : ScriptableObject
         }
 
         return lookup.TryGetValue(group, out var color) ? color : Color.white;
+    }
+
+    public Color GetRandomColor()
+    {
+        return groupColors[Random.Range(0, groupColors.Count - 1)].color;
     }
 }
 

@@ -1,5 +1,7 @@
 using NUnit.Framework;
 using System.Collections.Generic;
+using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,7 +20,7 @@ public static class GridHelpers
         grid.cellSize = new Vector2(squareCellSize, squareCellSize);
     }
 
-    public static List<GameObject> GetNeighbors(this GameObject[,] grid, int posX, int posY, int radius = 1, bool includeCenter = false)
+    public static List<GameObject> GetNeighbors(int posX, int posY, GameObject[,] grid, int radius = 1, bool includeCenter = false)
     {
         List<GameObject> neighbors = new List<GameObject>();
 
@@ -45,5 +47,15 @@ public static class GridHelpers
         }
 
         return neighbors;
+    }
+    public static bool AreDirectDiagonalNeighbors(Vector2Int a, Vector2Int b, int gridSize)
+    {
+        if (b.x < 0 || b.x >= gridSize || b.y < 0 || b.y >= gridSize)
+            return false;
+
+        int dx = Mathf.Abs(a.x - b.x);
+        int dy = Mathf.Abs(a.y - b.y);
+
+        return dx == 1 && dy == 1;
     }
 }

@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      crown-emoji-2048x1463-p6njt0zs_0: -5813441773616536020
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

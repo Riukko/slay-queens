@@ -1,5 +1,7 @@
-﻿using System;
+﻿using NUnit.Framework;
+using System;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,6 +19,41 @@ public class CellBehaviour : MonoBehaviour
 
     public CellStatus cellStatus = CellStatus.IDLE;
 
+    public Queen Queen
+    {
+        get => _queen;
+        set
+        {
+            if(value == null)
+            {
+                queenSprite.enabled = false;
+                GameManager.Instance.RemoveQueen(_queen);
+                _queen.OnConflictsChanged -= UpdateConflictStatus;
+                IsCellConflicted = false;
+            }
+            else
+            {
+                queenSprite.enabled = true;
+                value.OnConflictsChanged += UpdateConflictStatus;
+                GameManager.Instance.AddQueen(value);
+            }
+            _queen = value;
+        }
+    }
+    private Queen _queen = null;
+
+    public bool IsCellConflicted
+    {
+        get => _isCellConflicted;
+        set
+        {
+            ErrorOverlay.SetActive(value);
+            _isCellConflicted = value;
+        }
+    }
+    private bool _isCellConflicted = false;
+    private void UpdateConflictStatus(bool isConflict) => IsCellConflicted = isConflict;
+
     public Image queenSprite;
     public GameObject ErrorOverlay;
 
@@ -33,7 +70,7 @@ public class CellBehaviour : MonoBehaviour
 
         if(GameManager.Instance.CellGroupColorPalette != null)
         {
-            GetComponent<Image>().color = GameManager.Instance.CellGroupColorPalette.groupColors[UnityEngine.Random.Range(0, GameManager.Instance.CellGroupColorPalette.groupColors.Count - 1)].color;
+            GetComponent<Image>().color = GameManager.Instance.CellGroupColorPalette.GetRandomColor();
         }
 
         this.cell = cell;
@@ -55,19 +92,18 @@ public class CellBehaviour : MonoBehaviour
         {
             case CellStatus.IDLE:
                 cellText.text = "";
-                queenSprite.enabled = false;
-                GameManager.Instance.RemoveQueen(cell);
+                Queen = null;
                 break;
             case CellStatus.EXCLUDED:
                 cellText.text = "X";
                 break;
             case CellStatus.QUEEN:
                 cellText.text = "";
-                queenSprite.enabled = true;
-                GameManager.Instance.AddQueen(cell);
+                Queen = new Queen(cell.PosX, cell.PosY);
                 break;
         }
     }
+
 }
 
 public record Cell(int PosX, int PosY)

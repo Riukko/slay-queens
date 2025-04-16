@@ -39,6 +39,8 @@ public class GridManager : MonoBehaviour
         GameManager.Instance.GridTable = new GameObject[gridSize, gridSize];
     }
 
+
+
     public void GenerateGrid()
     {
         if (cellPrefab == null)
