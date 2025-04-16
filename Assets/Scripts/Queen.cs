@@ -1,17 +1,16 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 [System.Serializable]
 public sealed class Queen
 {
-    public int posX;
-    public int posY;
+    public Vector2Int Coordinates;
     private HashSet<Queen> Conflicts = new();
 
-    public Queen(int posX, int posY)
+    public Queen(Vector2Int coordinates)
     {
-        this.posX = posX;
-        this.posY = posY;
+        Coordinates = coordinates;
     }
 
     public event Action<bool> OnConflictsChanged;

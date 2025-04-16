@@ -36,7 +36,7 @@ public class GridManager : MonoBehaviour
         {
             GridHelpers.ResizeGrid(grid, rectTransform, gridSize);
         }
-        GameManager.Instance.GridTable = new GameObject[gridSize, gridSize];
+        GameManager.Instance.CellTable = new Cell[gridSize, gridSize];
     }
 
 
@@ -58,20 +58,20 @@ public class GridManager : MonoBehaviour
         {
             for(int y = 0; y <gridSize; y++)
             {
-                InstantiateCell(x, y);
+                InstantiateCell(new Vector2Int(x,y));
             }
         }
 
         GridHelpers.ResizeGrid(grid, rectTransform, gridSize);
     }
 
-    public void InstantiateCell(int posX, int posY)
+    public void InstantiateCell(Vector2Int coordinates)
     {
-        GameObject cellGO = Instantiate(cellPrefab, transform);
-        cellGO.GetComponent<CellBehaviour>().InitializeCell(posX, posY);
+
+        Cell cell = Instantiate(cellPrefab, transform).GetComponent<Cell>();
+        cell.InitializeCell(coordinates);
         
-        GameManager.Instance.GridTable[posX, posY] = cellGO;
-        //cellGO.GetComponentInChildren<TextMeshProUGUI>().text = $"{posX},{posY}";
+        GameManager.Instance.CellTable[coordinates.x, coordinates.y] = cell;
     }
 
     public void ClearGrid()
@@ -81,6 +81,6 @@ public class GridManager : MonoBehaviour
             Transform child = transform.GetChild(i);
             DestroyImmediate(child.gameObject);
         }
-        GameManager.Instance.GridTable = new GameObject[gridSize, gridSize];
+        GameManager.Instance.CellTable = new Cell[gridSize, gridSize];
     }
 }

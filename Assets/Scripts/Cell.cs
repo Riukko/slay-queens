@@ -12,12 +12,13 @@ public enum CellStatus
     QUEEN
 }
 
-public class CellBehaviour : MonoBehaviour
+public class Cell : MonoBehaviour
 {
+    public Vector2Int Coordinates;
 
-    public Cell cell;
+    public CellStatus CellStatus = CellStatus.IDLE;
 
-    public CellStatus cellStatus = CellStatus.IDLE;
+    public CellGroup CellGroup = CellGroup.WHITE;
 
     public Queen Queen
     {
@@ -63,25 +64,23 @@ public class CellBehaviour : MonoBehaviour
         ErrorOverlay.SetActive(false);
     }
 
-    public void InitializeCell(int posX, int posY)
+    public void InitializeCell(Vector2Int coordinates)
     {
-        Cell cell = new(posX, posY);
-        cell.cellGroup = (CellGroup)UnityEngine.Random.Range(0, Enum.GetValues(typeof(CellGroup)).Length);
+        Coordinates = coordinates;
+        CellGroup = (CellGroup)UnityEngine.Random.Range(0, Enum.GetValues(typeof(CellGroup)).Length);
 
         if(GameManager.Instance.CellGroupColorPalette != null)
         {
             GetComponent<Image>().color = GameManager.Instance.CellGroupColorPalette.GetRandomColor();
         }
-
-        this.cell = cell;
     }
 
     public void OnCellClick()
     {
-        int nextStatus = ((int)cellStatus + 1) % Enum.GetValues(typeof(CellStatus)).Length;
+        int nextStatus = ((int)CellStatus + 1) % Enum.GetValues(typeof(CellStatus)).Length;
 
-        cellStatus = (CellStatus)nextStatus;
-        ApplyStatus(cellStatus);
+        CellStatus = (CellStatus)nextStatus;
+        ApplyStatus(CellStatus);
 
     }
 
@@ -99,14 +98,9 @@ public class CellBehaviour : MonoBehaviour
                 break;
             case CellStatus.QUEEN:
                 cellText.text = "";
-                Queen = new Queen(cell.PosX, cell.PosY);
+                Queen = new Queen(Coordinates);
                 break;
         }
     }
 
-}
-
-public record Cell(int PosX, int PosY)
-{
-    internal CellGroup cellGroup;
 }

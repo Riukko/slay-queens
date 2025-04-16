@@ -20,9 +20,9 @@ public static class GridHelpers
         grid.cellSize = new Vector2(squareCellSize, squareCellSize);
     }
 
-    public static List<GameObject> GetNeighbors(int posX, int posY, GameObject[,] grid, int radius = 1, bool includeCenter = false)
+    public static List<Cell> GetCellNeighbors(this Cell cell, Cell[,] grid, int radius = 1, bool includeCenter = false)
     {
-        List<GameObject> neighbors = new List<GameObject>();
+        List<Cell> neighbors = new List<Cell>();
 
         int width = grid.GetLength(0);
         int height = grid.GetLength(1);
@@ -31,15 +31,15 @@ public static class GridHelpers
         {
             for (int offsetX = -radius; offsetX <= radius; offsetX++)
             {
-                int nx = posX + offsetX;
-                int ny = posY + offsetY;
+                int nx = cell.Coordinates.x + offsetX;
+                int ny = cell.Coordinates.y + offsetY;
 
                 if (!includeCenter && offsetX == 0 && offsetY == 0)
                     continue;
 
                 if (nx >= 0 && ny >= 0 && nx < width && ny < height)
                 {
-                    GameObject neighbor = grid[nx, ny];
+                    Cell neighbor = grid[nx, ny];
                     if (neighbor != null)
                         neighbors.Add(neighbor);
                 }

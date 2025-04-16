@@ -8,7 +8,7 @@ using Mono.Cecil.Cil;
 public class GameManager : MonoBehaviour
 {
     [SerializeField]
-    public GameObject[,] GridTable;
+    public Cell[,] CellTable;
 
     public CellGroupColorPalette CellGroupColorPalette;
 
@@ -33,7 +33,7 @@ public class GameManager : MonoBehaviour
             queen.RemoveConflict(queenToRemove);
         }
 
-        GridTable[queenToRemove.posX, queenToRemove.posY].GetComponent<CellBehaviour>().IsCellConflicted = false;
+        CellTable[queenToRemove.Coordinates.x, queenToRemove.Coordinates.y].IsCellConflicted = false;
     }
 
     public void UpdateQueenConflicts(Queen queenToCheck)
@@ -42,9 +42,9 @@ public class GameManager : MonoBehaviour
         {
             if (queen == queenToCheck) continue;
 
-            if (queen.posX == queenToCheck.posX 
-                || queen.posY == queenToCheck.posY 
-                || GridHelpers.AreDirectDiagonalNeighbors(new Vector2Int(queen.posX, queen.posY), new Vector2Int(queenToCheck.posX, queenToCheck.posY), GridManager.gridSize))
+            if (queen.Coordinates.x == queenToCheck.Coordinates.x 
+                || queen.Coordinates.y == queenToCheck.Coordinates.y 
+                || GridHelpers.AreDirectDiagonalNeighbors(queen.Coordinates, queenToCheck.Coordinates, GridManager.gridSize))
             {
                 queenToCheck.AddConflict(queen);
                 queen.AddConflict(queenToCheck);
