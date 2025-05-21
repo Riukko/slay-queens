@@ -1,21 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
-using System.Net.Security;
-using Mono.Cecil.Cil;
 
-[ExecuteAlways]
-public class GameManager : MonoBehaviour
+public class QueenManager : MonoBehaviour
 {
-    [SerializeField]
-    public Cell[,] CellTable;
-
-    public CellGroupColorPalette CellGroupColorPalette;
-
     public List<Queen> Queens = new();
-
-    public GridManager GridManager;
-
 
     public void AddQueen(Queen queenToAdd)
     {
@@ -33,7 +21,7 @@ public class GameManager : MonoBehaviour
             queen.RemoveConflict(queenToRemove);
         }
 
-        CellTable[queenToRemove.Coordinates.x, queenToRemove.Coordinates.y].IsCellConflicted = false;
+        GridManager.Instance.CellTable[queenToRemove.Coordinates.x, queenToRemove.Coordinates.y].IsCellConflicted = false;
     }
 
     public void UpdateQueenConflicts(Queen queenToCheck)
@@ -42,9 +30,9 @@ public class GameManager : MonoBehaviour
         {
             if (queen == queenToCheck) continue;
 
-            if (queen.Coordinates.x == queenToCheck.Coordinates.x 
-                || queen.Coordinates.y == queenToCheck.Coordinates.y 
-                || GridHelpers.AreDirectDiagonalNeighbors(queen.Coordinates, queenToCheck.Coordinates, GridManager.gridSize))
+            if (queen.Coordinates.x == queenToCheck.Coordinates.x
+                || queen.Coordinates.y == queenToCheck.Coordinates.y
+                || GridHelpers.AreDirectDiagonalNeighbors(queen.Coordinates, queenToCheck.Coordinates, GridManager.Instance.GridSize))
             {
                 queenToCheck.AddConflict(queen);
                 queen.AddConflict(queenToCheck);
@@ -53,16 +41,10 @@ public class GameManager : MonoBehaviour
     }
 
     #region Singleton
-    private static GameManager instance = null;
-    public static GameManager Instance
-    {
-        get
-        {
-            if (instance == null)
-                instance = FindFirstObjectByType<GameManager>();
-            return instance;
-        }
-    }
+    private static QueenManager instance = null;
+    public static QueenManager Instance => instance;
+    public static bool HasInstance => instance != null;
+
     private void Awake()
     {
         if (instance != null && instance != this)
@@ -74,6 +56,7 @@ public class GameManager : MonoBehaviour
         {
             instance = this;
         }
+        DontDestroyOnLoad(this.gameObject);
     }
     #endregion
 }

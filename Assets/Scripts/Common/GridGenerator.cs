@@ -1,16 +1,12 @@
 using UnityEngine;
 using UnityEngine.UI;
-using System;
-using TMPro;
-
 
 #if UNITY_EDITOR
-using UnityEditor;
 #endif
 
 [ExecuteAlways]
 [RequireComponent(typeof(GridLayoutGroup), typeof(RectTransform))]
-public class GridManager : MonoBehaviour
+public class GridGenerator : MonoBehaviour
 {
     [Range(1, 15)]
     public int gridSize;
@@ -19,8 +15,12 @@ public class GridManager : MonoBehaviour
     public GameObject cellPrefab;
 
     private GridLayoutGroup grid;
+
     private RectTransform rectTransform;
 
+    [SerializeField]
+    private CellGroupColorPalette cellGroupColorPalette;
+    public static CellGroupColorPalette CellGroupColorPalette;
 
     public void Start()
     {
@@ -36,10 +36,17 @@ public class GridManager : MonoBehaviour
         {
             GridHelpers.ResizeGrid(grid, rectTransform, gridSize);
         }
-        GameManager.Instance.CellTable = new Cell[gridSize, gridSize];
+
+        if (GridManager.HasInstance)
+        {
+            GridManager.Instance.CellTable = new Cell[gridSize, gridSize];
+        }
+
+        if (CellGroupColorPalette == null)
+        {
+            CellGroupColorPalette = cellGroupColorPalette;
+        }
     }
-
-
 
     public void GenerateGrid()
     {
@@ -56,13 +63,18 @@ public class GridManager : MonoBehaviour
 
         for (int x = 0; x < gridSize; x++)
         {
-            for(int y = 0; y <gridSize; y++)
+            for (int y = 0; y < gridSize; y++)
             {
-                InstantiateCell(new Vector2Int(x,y));
+                InstantiateCell(new Vector2Int(x, y));
             }
         }
 
         GridHelpers.ResizeGrid(grid, rectTransform, gridSize);
+
+        if (GridManager.HasInstance)
+        {
+            GridManager.Instance.GridSize = gridSize;
+        }
     }
 
     public void InstantiateCell(Vector2Int coordinates)
@@ -70,8 +82,11 @@ public class GridManager : MonoBehaviour
 
         Cell cell = Instantiate(cellPrefab, transform).GetComponent<Cell>();
         cell.InitializeCell(coordinates);
-        
-        GameManager.Instance.CellTable[coordinates.x, coordinates.y] = cell;
+
+        if (GridManager.HasInstance)
+        {
+            GridManager.Instance.CellTable[coordinates.x, coordinates.y] = cell;
+        }
     }
 
     public void ClearGrid()
@@ -81,6 +96,10 @@ public class GridManager : MonoBehaviour
             Transform child = transform.GetChild(i);
             DestroyImmediate(child.gameObject);
         }
-        GameManager.Instance.CellTable = new Cell[gridSize, gridSize];
+
+        if (GridManager.HasInstance)
+        {
+            GridManager.Instance.CellTable = new Cell[gridSize, gridSize];
+        }
     }
 }

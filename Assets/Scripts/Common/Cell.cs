@@ -1,7 +1,5 @@
-﻿using NUnit.Framework;
-using System;
+﻿using System;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -25,10 +23,10 @@ public class Cell : MonoBehaviour
         get => _queen;
         set
         {
-            if(value == null)
+            if (value == null)
             {
                 queenSprite.enabled = false;
-                GameManager.Instance.RemoveQueen(_queen);
+                QueenManager.Instance.RemoveQueen(_queen);
                 _queen.OnConflictsChanged -= UpdateConflictStatus;
                 IsCellConflicted = false;
             }
@@ -36,12 +34,12 @@ public class Cell : MonoBehaviour
             {
                 queenSprite.enabled = true;
                 value.OnConflictsChanged += UpdateConflictStatus;
-                GameManager.Instance.AddQueen(value);
+                QueenManager.Instance.AddQueen(value);
             }
             _queen = value;
         }
     }
-    private Queen _queen = null;
+    protected Queen _queen = null;
 
     public bool IsCellConflicted
     {
@@ -52,8 +50,8 @@ public class Cell : MonoBehaviour
             _isCellConflicted = value;
         }
     }
-    private bool _isCellConflicted = false;
-    private void UpdateConflictStatus(bool isConflict) => IsCellConflicted = isConflict;
+    protected bool _isCellConflicted = false;
+    protected void UpdateConflictStatus(bool isConflict) => IsCellConflicted = isConflict;
 
     public Image queenSprite;
     public GameObject ErrorOverlay;
@@ -69,9 +67,9 @@ public class Cell : MonoBehaviour
         Coordinates = coordinates;
         CellGroup = (CellGroup)UnityEngine.Random.Range(0, Enum.GetValues(typeof(CellGroup)).Length);
 
-        if(GameManager.Instance.CellGroupColorPalette != null)
+        if (GridGenerator.CellGroupColorPalette != null)
         {
-            GetComponent<Image>().color = GameManager.Instance.CellGroupColorPalette.GetRandomColor();
+            GetComponent<Image>().color = GridGenerator.CellGroupColorPalette.GetRandomColor();
         }
     }
 
@@ -84,7 +82,7 @@ public class Cell : MonoBehaviour
 
     }
 
-    private void ApplyStatus(CellStatus status)
+    protected void ApplyStatus(CellStatus status)
     {
         TextMeshProUGUI cellText = GetComponentInChildren<TextMeshProUGUI>();
         switch (status)
