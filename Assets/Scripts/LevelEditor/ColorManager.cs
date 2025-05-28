@@ -1,18 +1,14 @@
 using UnityEngine;
 
-[ExecuteAlways]
-public class GameManager : MonoBehaviour
+public class ColorManager : MonoBehaviour
 {
-    [SerializeField]
+    public ClickActionStatus CurrentStatus = ClickActionStatus.COLOR;
 
-    public GridDataManager GridManager;
-
-
-
+    public CellColorGroup CurrentColor = CellColorGroup.WHITE;
 
     #region Singleton
-    private static GameManager instance = null;
-    public static GameManager Instance => instance;
+    private static ColorManager instance = null;
+    public static ColorManager Instance => instance;
     public static bool HasInstance => instance != null;
 
     private void Awake()
@@ -29,4 +25,11 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(this.gameObject);
     }
     #endregion
+}
+
+public enum ClickActionStatus
+{
+    COLOR,
+    ERASE,
+    QUEEN
 }

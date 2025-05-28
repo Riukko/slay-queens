@@ -21,7 +21,7 @@ public class QueenManager : MonoBehaviour
             queen.RemoveConflict(queenToRemove);
         }
 
-        GridManager.Instance.CellTable[queenToRemove.Coordinates.x, queenToRemove.Coordinates.y].IsCellConflicted = false;
+        GridDataManager.Instance.CellTable[queenToRemove.Coordinates.x, queenToRemove.Coordinates.y].IsCellConflicted = false;
     }
 
     public void UpdateQueenConflicts(Queen queenToCheck)
@@ -32,7 +32,7 @@ public class QueenManager : MonoBehaviour
 
             if (queen.Coordinates.x == queenToCheck.Coordinates.x
                 || queen.Coordinates.y == queenToCheck.Coordinates.y
-                || GridHelpers.AreDirectDiagonalNeighbors(queen.Coordinates, queenToCheck.Coordinates, GridManager.Instance.GridSize))
+                || GridHelpers.AreDirectDiagonalNeighbors(queen.Coordinates, queenToCheck.Coordinates, GridDataManager.Instance.GridSize))
             {
                 queenToCheck.AddConflict(queen);
                 queen.AddConflict(queenToCheck);

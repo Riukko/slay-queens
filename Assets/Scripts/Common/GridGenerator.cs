@@ -8,19 +8,21 @@ using UnityEngine.UI;
 [RequireComponent(typeof(GridLayoutGroup), typeof(RectTransform))]
 public class GridGenerator : MonoBehaviour
 {
-    [Range(1, 15)]
-    public int gridSize;
+    [Range(1, 11)]
+    public int GridSize;
 
+    [SerializeField]
     public bool autoResize;
-    public GameObject cellPrefab;
+
+    [SerializeField]
+    public bool setRandomColors;
+
+    [SerializeField]
+    private GameObject cellPrefab;
 
     private GridLayoutGroup grid;
 
     private RectTransform rectTransform;
-
-    [SerializeField]
-    private CellGroupColorPalette cellGroupColorPalette;
-    public static CellGroupColorPalette CellGroupColorPalette;
 
     public void Start()
     {
@@ -34,17 +36,12 @@ public class GridGenerator : MonoBehaviour
     {
         if (autoResize)
         {
-            GridHelpers.ResizeGrid(grid, rectTransform, gridSize);
+            GridHelpers.ResizeGrid(grid, rectTransform, GridSize);
         }
 
-        if (GridManager.HasInstance)
+        if (GridDataManager.HasInstance)
         {
-            GridManager.Instance.CellTable = new Cell[gridSize, gridSize];
-        }
-
-        if (CellGroupColorPalette == null)
-        {
-            CellGroupColorPalette = cellGroupColorPalette;
+            GridDataManager.Instance.CellTable = new Cell[GridSize, GridSize];
         }
     }
 
@@ -59,21 +56,21 @@ public class GridGenerator : MonoBehaviour
         ClearGrid();
 
 
-        grid.constraintCount = gridSize;
+        grid.constraintCount = GridSize;
 
-        for (int x = 0; x < gridSize; x++)
+        for (int x = 0; x < GridSize; x++)
         {
-            for (int y = 0; y < gridSize; y++)
+            for (int y = 0; y < GridSize; y++)
             {
                 InstantiateCell(new Vector2Int(x, y));
             }
         }
 
-        GridHelpers.ResizeGrid(grid, rectTransform, gridSize);
+        GridHelpers.ResizeGrid(grid, rectTransform, GridSize);
 
-        if (GridManager.HasInstance)
+        if (GridDataManager.HasInstance)
         {
-            GridManager.Instance.GridSize = gridSize;
+            GridDataManager.Instance.GridSize = GridSize;
         }
     }
 
@@ -81,11 +78,13 @@ public class GridGenerator : MonoBehaviour
     {
 
         Cell cell = Instantiate(cellPrefab, transform).GetComponent<Cell>();
-        cell.InitializeCell(coordinates);
 
-        if (GridManager.HasInstance)
+        //TODO : Set the right color depending on level loading
+        cell.InitializeCell(coordinates, setRandomColors ? CellGroupColorPalette.GetRandomColorGroup() : CellColorGroup.WHITE);
+
+        if (GridDataManager.HasInstance)
         {
-            GridManager.Instance.CellTable[coordinates.x, coordinates.y] = cell;
+            GridDataManager.Instance.CellTable[coordinates.x, coordinates.y] = cell;
         }
     }
 
@@ -97,9 +96,9 @@ public class GridGenerator : MonoBehaviour
             DestroyImmediate(child.gameObject);
         }
 
-        if (GridManager.HasInstance)
+        if (GridDataManager.HasInstance)
         {
-            GridManager.Instance.CellTable = new Cell[gridSize, gridSize];
+            GridDataManager.Instance.CellTable = new Cell[GridSize, GridSize];
         }
     }
 }

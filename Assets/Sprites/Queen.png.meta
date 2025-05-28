@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 2a1ab5b18cf5c5e4eb46a031c8c7c0f0
+guid: f2085d5e10789224bb1287526f0765ad
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5813441773616536020
-    second: crown-emoji-2048x1463-p6njt0zs_0
+      213: 7519753400087680208
+    second: Queen_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,7 +113,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: crown-emoji-2048x1463-p6njt0zs_0
+      name: Queen_0
       rect:
         serializedVersion: 2
         x: 0
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: c266b210281825fa0800000000000000
-      internalID: -5813441773616536020
+      spriteID: 0d413c240e78b5860800000000000000
+      internalID: 7519753400087680208
       vertices: []
       indices: 
       edges: []
@@ -147,8 +147,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      crown-emoji-2048x1463-p6njt0zs_0: -5813441773616536020
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

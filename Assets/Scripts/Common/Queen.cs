@@ -6,6 +6,7 @@ using UnityEngine;
 public sealed class Queen
 {
     public Vector2Int Coordinates;
+
     private HashSet<Queen> Conflicts = new();
 
     public Queen(Vector2Int coordinates)

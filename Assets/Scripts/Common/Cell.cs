@@ -1,6 +1,6 @@
-﻿using System;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public enum CellStatus
@@ -10,13 +10,35 @@ public enum CellStatus
     QUEEN
 }
 
-public class Cell : MonoBehaviour
+public abstract class Cell : MonoBehaviour, IPointerEnterHandler, IPointerDownHandler
 {
+    #region Public Variables
     public Vector2Int Coordinates;
 
-    public CellStatus CellStatus = CellStatus.IDLE;
+    public CellStatus CellStatus
+    {
+        get => _cellStatus;
+        set
+        {
+            switch (value)
+            {
+                case CellStatus.IDLE:
+                    CellText.text = "";
+                    Queen = null;
+                    break;
+                case CellStatus.EXCLUDED:
+                    CellText.text = "X";
+                    break;
+                case CellStatus.QUEEN:
+                    CellText.text = "";
+                    Queen = new Queen(Coordinates);
+                    break;
+            }
 
-    public CellGroup CellGroup = CellGroup.WHITE;
+            _cellStatus = value;
+        }
+    }
+
 
     public Queen Queen
     {
@@ -39,7 +61,7 @@ public class Cell : MonoBehaviour
             _queen = value;
         }
     }
-    protected Queen _queen = null;
+
 
     public bool IsCellConflicted
     {
@@ -50,55 +72,66 @@ public class Cell : MonoBehaviour
             _isCellConflicted = value;
         }
     }
-    protected bool _isCellConflicted = false;
+
+    public CellColorGroup CellGroup = CellColorGroup.WHITE;
+
+    #endregion
+
+    #region Protected Variables
+
+    protected TextMeshProUGUI CellText;
+    protected Image CellImage;
+
+    [SerializeField]
+    protected Image queenSprite;
+
+    [SerializeField]
+    protected GameObject ErrorOverlay;
+    #endregion
+
+    #region Private variables
+
+    private Queen _queen = null;
+    private CellStatus _cellStatus = CellStatus.IDLE;
+
+    #endregion
+
+
+    private bool _isCellConflicted = false;
     protected void UpdateConflictStatus(bool isConflict) => IsCellConflicted = isConflict;
 
-    public Image queenSprite;
-    public GameObject ErrorOverlay;
+    public abstract void OnCellClick();
 
-    private void Start()
-    {
-        queenSprite.enabled = false;
-        ErrorOverlay.SetActive(false);
-    }
-
-    public void InitializeCell(Vector2Int coordinates)
+    public void InitializeCell(Vector2Int coordinates, CellColorGroup colorGroup)
     {
         Coordinates = coordinates;
-        CellGroup = (CellGroup)UnityEngine.Random.Range(0, Enum.GetValues(typeof(CellGroup)).Length);
+        CellGroup = colorGroup;
+        CellText = GetComponentInChildren<TextMeshProUGUI>();
+        CellImage = GetComponent<Image>();
+        ApplyColor();
+    }
 
-        if (GridGenerator.CellGroupColorPalette != null)
+    public void ApplyColor()
+    {
+        CellImage.color = CellGroupColorPalette.GetColor(CellGroup);
+    }
+
+
+    #region Pointer Events
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        if (eventData.button == PointerEventData.InputButton.Left)
         {
-            GetComponent<Image>().color = GridGenerator.CellGroupColorPalette.GetRandomColor();
+            OnCellClick();
         }
     }
 
-    public void OnCellClick()
+    public void OnPointerEnter(PointerEventData eventData)
     {
-        int nextStatus = ((int)CellStatus + 1) % Enum.GetValues(typeof(CellStatus)).Length;
-
-        CellStatus = (CellStatus)nextStatus;
-        ApplyStatus(CellStatus);
-
-    }
-
-    protected void ApplyStatus(CellStatus status)
-    {
-        TextMeshProUGUI cellText = GetComponentInChildren<TextMeshProUGUI>();
-        switch (status)
+        if (Input.GetMouseButton(0))
         {
-            case CellStatus.IDLE:
-                cellText.text = "";
-                Queen = null;
-                break;
-            case CellStatus.EXCLUDED:
-                cellText.text = "X";
-                break;
-            case CellStatus.QUEEN:
-                cellText.text = "";
-                Queen = new Queen(Coordinates);
-                break;
+            OnCellClick();
         }
     }
-
+    #endregion
 }
