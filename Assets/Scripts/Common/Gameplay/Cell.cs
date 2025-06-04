@@ -10,7 +10,7 @@ public enum CellStatus
     QUEEN
 }
 
-public abstract class Cell : MonoBehaviour, IPointerEnterHandler, IPointerDownHandler
+public abstract class Cell : MonoBehaviour, IPointerEnterHandler, IPointerDownHandler, IPointerUpHandler
 {
     #region Public Variables
     public Vector2Int Coordinates;
@@ -73,8 +73,9 @@ public abstract class Cell : MonoBehaviour, IPointerEnterHandler, IPointerDownHa
         }
     }
 
-    public CellColorGroup CellGroup = CellColorGroup.WHITE;
+    public CellOutlines CellOutlines;
 
+    public CellColorGroup CellGroup = CellColorGroup.WHITE;
     #endregion
 
     #region Protected Variables
@@ -116,7 +117,6 @@ public abstract class Cell : MonoBehaviour, IPointerEnterHandler, IPointerDownHa
         CellImage.color = CellGroupColorPalette.GetColor(CellGroup);
     }
 
-
     #region Pointer Events
     public void OnPointerDown(PointerEventData eventData)
     {
@@ -131,6 +131,14 @@ public abstract class Cell : MonoBehaviour, IPointerEnterHandler, IPointerDownHa
         if (Input.GetMouseButton(0))
         {
             OnCellClick();
+        }
+    }
+
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        if (eventData.button == PointerEventData.InputButton.Left)
+        {
+            GridHelpers.HighlightCellOutlinesInGrid();
         }
     }
     #endregion

@@ -11,8 +11,11 @@ public class GridGenerator : MonoBehaviour
     [Range(1, 11)]
     public int GridSize;
 
+    [Range(0, 500)]
+    public int GridMargins;
+
     [SerializeField]
-    public bool autoResize;
+    public bool autoResizeCells;
 
     [SerializeField]
     public bool setRandomColors;
@@ -32,19 +35,6 @@ public class GridGenerator : MonoBehaviour
         GenerateGrid();
     }
 
-    private void OnValidate()
-    {
-        if (autoResize)
-        {
-            GridHelpers.ResizeGrid(grid, rectTransform, GridSize);
-        }
-
-        if (GridDataManager.HasInstance)
-        {
-            GridDataManager.Instance.CellTable = new Cell[GridSize, GridSize];
-        }
-    }
-
     public void GenerateGrid()
     {
         if (cellPrefab == null)
@@ -58,15 +48,15 @@ public class GridGenerator : MonoBehaviour
 
         grid.constraintCount = GridSize;
 
-        for (int x = 0; x < GridSize; x++)
+        for (int y = 0; y < GridSize; y++)
         {
-            for (int y = 0; y < GridSize; y++)
+            for (int x = 0; x < GridSize; x++)
             {
                 InstantiateCell(new Vector2Int(x, y));
             }
         }
 
-        GridHelpers.ResizeGrid(grid, rectTransform, GridSize);
+        GridHelpers.ResizeGrid(grid, rectTransform, GridSize, GridMargins, autoResizeCells);
 
         if (GridDataManager.HasInstance)
         {
