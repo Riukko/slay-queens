@@ -8,16 +8,26 @@ public class GridGeneratorEditor : Editor
     {
         DrawDefaultInspector();
 
-        GridGenerator resizer = (GridGenerator)target;
+        GridGenerator gridGenerator = (GridGenerator)target;
 
         if (GUILayout.Button("Generate grid"))
         {
-            resizer.GenerateGrid();
+            gridGenerator.GenerateGrid();
         }
 
         if (GUILayout.Button("Delete grid"))
         {
-            resizer.ClearGrid();
+            gridGenerator.ClearGrid();
+        }
+
+        if(GUILayout.Button("Generate cell outlines"))
+        {
+            GridHelpers.HighlightCellOutlinesInGrid();
+        }
+
+        if (GUILayout.Button("Generate grid outlines"))
+        {
+            GridHelpers.HighlightGridOuterLines();
         }
     }
 }
