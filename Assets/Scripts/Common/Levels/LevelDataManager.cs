@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -33,7 +34,7 @@ public class LevelDataManager : MonoBehaviour
                 savedLevelTable[x, y] = cellTable[x, y].CellGroup.GetColorIndexFromGroup();
             }
         }
-
+        
         if(!CurrentLevel.IsNull)
         {
             CurrentLevel.CellTable = savedLevelTable;
@@ -72,8 +73,8 @@ public class LevelDataManager : MonoBehaviour
         }
 
         string filePath = Path.Combine(LevelFilePath, $"{LevelFileNamePrefix}{gameLevel.LevelName}.json");
-        string json = JsonUtility.ToJson(gameLevel, true);
-        //File.WriteAllText(filePath, json);
+        string json = JsonConvert.SerializeObject(gameLevel);
+        File.WriteAllText(filePath, json);
 
         Debug.Log($"Level saved: {filePath}");
         CurrentLevel = gameLevel;
