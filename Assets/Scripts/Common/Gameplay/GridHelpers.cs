@@ -59,42 +59,41 @@ public static class GridHelpers
     }
 
 
-    public static void HighlightCellOutlinesInGrid()
+    public static void HighlightCellOutlinesInGrid(Cell[,] cellTable)
     {
-        if (!GridDataManager.HasInstance)
+        if (!GridManager.HasInstance)
             return;
 
-        Cell[,] grid = GridDataManager.Instance.CellTable;
-        int gridSize = GridDataManager.Instance.GridSize;
+        int gridSize = cellTable.GetLength(0);
 
         for (int y = 0; y < gridSize; y++)
         {
             for (int x = 0; x < gridSize; x++)
             {
-                Cell cell = grid[x, y];
+                Cell cell = cellTable[x, y];
                 CellOutlines outlines = cell.CellOutlines;
 
                 if(x != gridSize - 1)
-                    outlines.RightOutlineVisible(cell.CellGroup != grid[x + 1, y].CellGroup);
+                    outlines.RightOutlineVisible(cell.CellGroup != cellTable[x + 1, y].CellGroup);
 
                 if(y != gridSize - 1)
-                    outlines.BottomOutlineVisible(cell.CellGroup != grid[x, y + 1].CellGroup);
+                    outlines.BottomOutlineVisible(cell.CellGroup != cellTable[x, y + 1].CellGroup);
             }
         }
     }
 
-    public static void HighlightGridOuterLines()
+    public static void HighlightGridOuterLines(Cell[,] cellTable)
     {
-        if (!GridDataManager.HasInstance)
+        if (!GridManager.HasInstance)
             return;
 
-        int gridSize = GridDataManager.Instance.GridSize;
+        int gridSize = cellTable.GetLength(0);
 
         for (int y = 0; y < gridSize; y++)
         {
             for (int x = 0; x < gridSize; x++)
             {
-                Cell cell = GridDataManager.Instance.CellTable[x, y];
+                Cell cell = cellTable[x, y];
                 CellOutlines outlines = cell.CellOutlines;
 
                 if(x == 0)

@@ -13,13 +13,13 @@ public class ColorPickerGenerator : MonoBehaviour
 
     public void InitializeColorPicker()
     {
-        if (!GridDataManager.HasInstance || GridDataManager.Instance.GridSize <= 0)
+        if (!GridManager.HasInstance || GridManager.Instance.GridSize <= 0)
         {
             Debug.LogWarning("GridDataManager singleton is not initialized");
             return;
         }
 
-        for (int i = 0; i < GridDataManager.Instance.GridSize; i++)
+        for (int i = 0; i < GridManager.Instance.GridSize; i++)
         {
             GameObject colorButton = Instantiate(ColorButtonPrefab, ColorPickerParent);
             colorButton.GetComponent<LevelEditorButton>().InitializeWithIndex(i);

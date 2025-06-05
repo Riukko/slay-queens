@@ -1,33 +1,33 @@
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(GridGenerator))]
-public class GridGeneratorEditor : Editor
+[CustomEditor(typeof(GridManager))]
+public class GridManagerEditor : Editor
 {
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
 
-        GridGenerator gridGenerator = (GridGenerator)target;
+        GridManager gridManager = (GridManager)target;
 
         if (GUILayout.Button("Generate grid"))
         {
-            gridGenerator.GenerateGrid();
+            gridManager.GenerateGrid();
         }
 
         if (GUILayout.Button("Delete grid"))
         {
-            gridGenerator.ClearGrid();
+            gridManager.ClearGrid();
         }
 
         if(GUILayout.Button("Generate cell outlines"))
         {
-            GridHelpers.HighlightCellOutlinesInGrid();
+            GridHelpers.HighlightCellOutlinesInGrid(gridManager.CellTable);
         }
 
         if (GUILayout.Button("Generate grid outlines"))
         {
-            GridHelpers.HighlightGridOuterLines();
+            GridHelpers.HighlightGridOuterLines(gridManager.CellTable);
         }
     }
 }

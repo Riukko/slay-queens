@@ -139,7 +139,7 @@ public abstract class Cell : MonoBehaviour, IPointerEnterHandler, IPointerDownHa
     {
         if (eventData.button == PointerEventData.InputButton.Left)
         {
-            GridHelpers.HighlightCellOutlinesInGrid();
+            GridHelpers.HighlightCellOutlinesInGrid(GridManager.Instance.CellTable);
         }
     }
     #endregion

@@ -58,7 +58,7 @@ MonoBehaviour:
   m_StartCorner: 0
   m_StartAxis: 0
   m_CellSize: {x: 125, y: 125}
-  m_Spacing: {x: 2, y: 2}
+  m_Spacing: {x: 1, y: 1}
   m_Constraint: 1
   m_ConstraintCount: 8
 --- !u!114 &8181160110252704355
@@ -73,8 +73,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f3fa11797b964746807441a113784a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GridSize: 8
-  GridMargins: 80
-  autoResizeCells: 1
-  setRandomColors: 0
-  cellPrefab: {fileID: 7992231221614212600, guid: cd9f8772626c8504097c0885d22b78ca, type: 3}
+  grid: {fileID: 2055656678737540789}
+  rectTransform: {fileID: 6778322446051696282}

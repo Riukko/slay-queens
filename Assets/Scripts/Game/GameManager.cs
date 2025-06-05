@@ -5,7 +5,7 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField]
 
-    public GridDataManager GridManager;
+    public GridManager GridManager;
 
 
 

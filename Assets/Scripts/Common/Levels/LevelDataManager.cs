@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class LevelDataManager : MonoBehaviour
 {
-    public static readonly string LevelFilePath = Path.Combine(Application.streamingAssetsPath, "Levels");
+    public static readonly string LevelFilePath = Path.Combine(Application.streamingAssetsPath, "Levels").Replace('/', '\\');
     public static string LevelFileNamePrefix = "GL_";
 
     public GameLevel CurrentLevel = null;
@@ -17,14 +17,15 @@ public class LevelDataManager : MonoBehaviour
     private LevelDetailsView levelDetailsView;
 
     private bool hasUnsavedChanges;
+    public static string GetLevelFilePathFromName(string levelFileName) => Path.Combine(LevelFilePath, $"{levelFileName}.json");
 
     public void SaveCurrentLevel()
     {
-        if (!GridDataManager.HasInstance)
+        if (!GridManager.HasInstance)
             return;
 
-        int gridSize = GridDataManager.Instance.GridSize;
-        Cell[,] cellTable = GridDataManager.Instance.CellTable;
+        int gridSize = GridManager.Instance.GridSize;
+        Cell[,] cellTable = GridManager.Instance.CellTable;
         int[,] savedLevelTable = new int[gridSize, gridSize];
 
         for (int y = 0; y < gridSize; y++)
@@ -46,7 +47,7 @@ public class LevelDataManager : MonoBehaviour
             {
                 LevelId = Guid.NewGuid().ToString(),
                 CellTable = savedLevelTable,
-                LevelName = levelDetailsView.LevelNameText.text,
+                LevelName = $"{LevelFileNamePrefix}{levelDetailsView.LevelNameText.text}",
             };
             SaveLevelAsNew(newLevel);
 
@@ -54,9 +55,20 @@ public class LevelDataManager : MonoBehaviour
         }
     }
 
-    public void LoadLevel(GameLevel level)
+    public void LoadLevelFromFile(string levelFileName)
     {
-     //TODO
+        string levelFilePath = GetLevelFilePathFromName(levelFileName);
+        if (!File.Exists(levelFilePath))
+        {
+            Debug.LogError($"Couldn't find file {levelFilePath} to load it");
+            return;
+        }
+
+        string levelJson = File.ReadAllText(levelFilePath);
+        GameLevel deserializedLevel = JsonConvert.DeserializeObject<GameLevel>(levelJson);
+
+        CurrentLevel = deserializedLevel;
+        GridManager.Instance.GenerateGridFromTable(deserializedLevel.CellTable);
     }
 
     public void CreateNewLevel()
@@ -72,18 +84,40 @@ public class LevelDataManager : MonoBehaviour
             Debug.Log($"Directory created: {LevelFilePath}");
         }
 
-        string filePath = Path.Combine(LevelFilePath, $"{LevelFileNamePrefix}{gameLevel.LevelName}.json");
+        string filePath = GetLevelFilePathFromName(gameLevel.LevelName);
         string json = JsonConvert.SerializeObject(gameLevel);
-        File.WriteAllText(filePath, json);
+        try
+        {
+            File.WriteAllText(filePath, json);
+        }
+        catch(Exception e)
+        {
+            Debug.LogError($"Saving file {filePath} has failed with error : {e.Message}");
+            return;
+        }
 
         Debug.Log($"Level saved: {filePath}");
         CurrentLevel = gameLevel;
     }
 
-    private void OverwriteLevel(GameLevel gameLevel)
+    private void OverwriteLevel(GameLevel gameLevel, string oldName = "")
     {
-      //TODO
+
+
+        if (!string.IsNullOrEmpty(oldName))
+        {
+            string oldFilePath = Path.Combine(GetLevelFilePathFromName(oldName));
+            if (File.Exists(oldFilePath))
+            {
+                File.Delete(oldFilePath);
+            }
+            else
+            {
+                Debug.LogError($"Couldn't find file {oldFilePath}, couldn't delete it");
+            }
+        }
     }
+
 
     #region Singleton
     private static LevelDataManager instance = null;

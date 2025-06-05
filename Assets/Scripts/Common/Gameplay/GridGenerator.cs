@@ -4,91 +4,89 @@ using UnityEngine.UI;
 #if UNITY_EDITOR
 #endif
 
-[ExecuteAlways]
 [RequireComponent(typeof(GridLayoutGroup), typeof(RectTransform))]
 public class GridGenerator : MonoBehaviour
 {
-    [Range(1, 11)]
-    public int GridSize;
-
-    [Range(0, 500)]
-    public int GridMargins;
-
     [SerializeField]
-    public bool autoResizeCells;
-
-    [SerializeField]
-    public bool setRandomColors;
-
-    [SerializeField]
-    private GameObject cellPrefab;
-
     private GridLayoutGroup grid;
 
+    [SerializeField]
     private RectTransform rectTransform;
 
-    public void Start()
+    public Cell[,] GenerateEmptyGrid(int gridSize, int gridMargins, bool autoResizeCells, GameObject cellPrefab)
     {
-        grid = GetComponent<GridLayoutGroup>();
-        rectTransform = GetComponent<RectTransform>();
+        Cell[,] cellTable = new Cell[gridSize, gridSize];
 
-        GenerateGrid();
-    }
-
-    public void GenerateGrid()
-    {
         if (cellPrefab == null)
         {
             Debug.LogWarning("GridResizer needs a button prefab");
-            return;
+            return null;
         }
 
-        ClearGrid();
+        ClearGridVisuals();
 
+        grid.constraintCount = gridSize;
 
-        grid.constraintCount = GridSize;
-
-        for (int y = 0; y < GridSize; y++)
+        for (int y = 0; y < gridSize; y++)
         {
-            for (int x = 0; x < GridSize; x++)
+            for (int x = 0; x < gridSize; x++)
             {
-                InstantiateCell(new Vector2Int(x, y));
+                cellTable[x,y] = InstantiateCell(cellPrefab, new Vector2Int(x, y), CellColorGroup.WHITE);
             }
         }
 
-        GridHelpers.ResizeGrid(grid, rectTransform, GridSize, GridMargins, autoResizeCells);
+        GridHelpers.ResizeGrid(grid, rectTransform, gridSize, gridMargins, autoResizeCells);
+        GridHelpers.HighlightGridOuterLines(cellTable);
 
-        if (GridDataManager.HasInstance)
-        {
-            GridDataManager.Instance.GridSize = GridSize;
-        }
+        return cellTable;
     }
 
-    public void InstantiateCell(Vector2Int coordinates)
+    public Cell[,] GenerateGridFromTable(int gridSize, int gridMargins, bool autoResizeCells, GameObject cellPrefab, int[,] parsedTable)
     {
+        Cell[,] cellTable = new Cell[gridSize, gridSize];
 
-        Cell cell = Instantiate(cellPrefab, transform).GetComponent<Cell>();
-
-        //TODO : Set the right color depending on level loading
-        cell.InitializeCell(coordinates, setRandomColors ? CellGroupColorPalette.GetRandomColorGroup() : CellColorGroup.WHITE);
-
-        if (GridDataManager.HasInstance)
+        if (cellPrefab == null)
         {
-            GridDataManager.Instance.CellTable[coordinates.x, coordinates.y] = cell;
+            Debug.LogError("GridResizer needs a button prefab");
+            return null;
         }
+
+        ClearGridVisuals();
+
+        grid.constraintCount = gridSize;
+
+        for (int y = 0; y < gridSize; y++)
+        {
+            for (int x = 0; x < gridSize; x++)
+            {
+                cellTable[x, y] = InstantiateCell(cellPrefab, new Vector2Int(x, y), CellGroupColorPalette.GetColorGroupAtIndex(parsedTable[x,y]));
+            }
+        }
+
+        GridHelpers.ResizeGrid(grid, rectTransform, gridSize, gridMargins, autoResizeCells);
+        GridHelpers.HighlightCellOutlinesInGrid(cellTable);
+        GridHelpers.HighlightGridOuterLines(cellTable);
+
+        return cellTable;
     }
 
-    public void ClearGrid()
+    public void ClearGridVisuals()
     {
         for (int i = transform.childCount - 1; i >= 0; i--)
         {
             Transform child = transform.GetChild(i);
             DestroyImmediate(child.gameObject);
         }
+    }
 
-        if (GridDataManager.HasInstance)
-        {
-            GridDataManager.Instance.CellTable = new Cell[GridSize, GridSize];
-        }
+    private Cell InstantiateCell(GameObject cellPrefab, Vector2Int coordinates, CellColorGroup colorGroup)
+    {
+
+        Cell cell = Instantiate(cellPrefab, transform).GetComponent<Cell>();
+
+        //TODO : Set the right color depending on level loading
+        cell.InitializeCell(coordinates, colorGroup);
+
+        return cell;
     }
 }
