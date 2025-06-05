@@ -14,9 +14,7 @@ public class GridDataManager : MonoBehaviour
         {
             Debug.LogError("The Grid Generator object should be passed to the Grid Data Manager");
             return;
-        }
-
-        GridSize = GridGenerator.GridSize;
+        }        
     }
 
     #region Singleton
@@ -34,6 +32,8 @@ public class GridDataManager : MonoBehaviour
         {
             instance = this;
         }
+
+        GridSize = GridGenerator.GridSize;
         DontDestroyOnLoad(this.gameObject);
     }
     #endregion
