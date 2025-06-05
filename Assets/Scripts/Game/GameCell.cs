@@ -8,4 +8,9 @@ public class GameCell : Cell
 
         CellStatus = (CellStatus)nextStatus;
     }
+
+    public override void OnCellHoldClick()
+    {
+        OnCellClick();
+    }
 }

@@ -6,19 +6,17 @@ public class GridDataManager : MonoBehaviour
 
     public int GridSize;
 
-    [SerializeField]
-    private GridGenerator gridGenerator;
+    public GridGenerator GridGenerator;
 
     public void Start()
     {
-        if(gridGenerator == null)
+        if(GridGenerator == null)
         {
             Debug.LogError("The Grid Generator object should be passed to the Grid Data Manager");
             return;
         }
 
-        GridSize = gridGenerator.GridSize;
-        GridHelpers.HighlightGridOuterLines();
+        GridSize = GridGenerator.GridSize;
     }
 
     #region Singleton

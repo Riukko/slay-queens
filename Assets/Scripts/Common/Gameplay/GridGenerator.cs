@@ -4,7 +4,6 @@ using UnityEngine.UI;
 #if UNITY_EDITOR
 #endif
 
-[ExecuteAlways]
 [RequireComponent(typeof(GridLayoutGroup), typeof(RectTransform))]
 public class GridGenerator : MonoBehaviour
 {

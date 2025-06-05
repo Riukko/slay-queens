@@ -97,11 +97,17 @@ public static class GridHelpers
                 Cell cell = GridDataManager.Instance.CellTable[x, y];
                 CellOutlines outlines = cell.CellOutlines;
 
-                outlines.LeftOutlineVisible(x == 0);
-                outlines.RightOutlineVisible(x == gridSize - 1);
+                if(x == 0)
+                    outlines.LeftOutlineVisible(true);
 
-                outlines.TopOutlineVisible(y == 0);
-                outlines.BottomOutlineVisible(y == gridSize - 1);
+                if(x == gridSize - 1)
+                    outlines.RightOutlineVisible(true);
+
+                if(y == 0)
+                    outlines.TopOutlineVisible(true);
+
+                if(y == gridSize - 1)
+                    outlines.BottomOutlineVisible(true);
             }
         }
     }

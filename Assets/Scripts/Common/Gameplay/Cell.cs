@@ -102,6 +102,7 @@ public abstract class Cell : MonoBehaviour, IPointerEnterHandler, IPointerDownHa
     protected void UpdateConflictStatus(bool isConflict) => IsCellConflicted = isConflict;
 
     public abstract void OnCellClick();
+    public abstract void OnCellHoldClick();
 
     public void InitializeCell(Vector2Int coordinates, CellColorGroup colorGroup)
     {
@@ -130,7 +131,7 @@ public abstract class Cell : MonoBehaviour, IPointerEnterHandler, IPointerDownHa
     {
         if (Input.GetMouseButton(0))
         {
-            OnCellClick();
+            OnCellHoldClick();
         }
     }
 

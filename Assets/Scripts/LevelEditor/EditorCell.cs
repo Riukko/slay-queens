@@ -18,4 +18,9 @@ public class EditorCell : Cell
                 break;
         }
     }
+
+    public override void OnCellHoldClick()
+    {
+        OnCellClick();
+    }
 }
