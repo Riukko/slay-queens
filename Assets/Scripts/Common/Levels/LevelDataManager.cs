@@ -1,23 +1,23 @@
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.CompilerServices;
-using UnityEditor;
 using UnityEngine;
 
-public class LevelManager : MonoBehaviour
+public class LevelDataManager : MonoBehaviour
 {
     public static readonly string LevelFilePath = Path.Combine(Application.streamingAssetsPath, "Levels");
     public static string LevelFileNamePrefix = "GL_";
 
-    public GameLevel CurrentLevel;
+    public GameLevel CurrentLevel = null;
 
     public List<List<int>> aled = new();
 
+    [SerializeField]
+    private LevelDetailsView levelDetailsView;
+
     private bool hasUnsavedChanges;
 
-    public void SaveCurrentLevel(string levelName)
+    public void SaveCurrentLevel()
     {
         if (!GridDataManager.HasInstance)
             return;
@@ -34,7 +34,7 @@ public class LevelManager : MonoBehaviour
             }
         }
 
-        if(CurrentLevel != null)
+        if(!CurrentLevel.IsNull)
         {
             CurrentLevel.CellTable = savedLevelTable;
             OverwriteLevel(CurrentLevel);
@@ -45,7 +45,7 @@ public class LevelManager : MonoBehaviour
             {
                 LevelId = Guid.NewGuid().ToString(),
                 CellTable = savedLevelTable,
-                LevelName = levelName,
+                LevelName = levelDetailsView.LevelNameText.text,
             };
             SaveLevelAsNew(newLevel);
 
@@ -65,9 +65,15 @@ public class LevelManager : MonoBehaviour
 
     private void SaveLevelAsNew(GameLevel gameLevel)
     {
-        string filePath = Path.Combine(LevelFilePath, $"{LevelFileNamePrefix}{gameLevel.LevelId}.json");
+        if (!Directory.Exists(LevelFilePath))
+        {
+            Directory.CreateDirectory(LevelFilePath);
+            Debug.Log($"Directory created: {LevelFilePath}");
+        }
+
+        string filePath = Path.Combine(LevelFilePath, $"{LevelFileNamePrefix}{gameLevel.LevelName}.json");
         string json = JsonUtility.ToJson(gameLevel, true);
-        File.WriteAllText(filePath, json);
+        //File.WriteAllText(filePath, json);
 
         Debug.Log($"Level saved: {filePath}");
         CurrentLevel = gameLevel;
@@ -79,8 +85,8 @@ public class LevelManager : MonoBehaviour
     }
 
     #region Singleton
-    private static LevelManager instance = null;
-    public static LevelManager Instance => instance;
+    private static LevelDataManager instance = null;
+    public static LevelDataManager Instance => instance;
     public static bool HasInstance => instance != null;
     private void Awake()
     {
