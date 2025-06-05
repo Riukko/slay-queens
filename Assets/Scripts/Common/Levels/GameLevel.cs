@@ -8,5 +8,5 @@ public class GameLevel
     public string LevelName;
     public int[,] CellTable;
 
-    public bool IsNull => string.IsNullOrEmpty(LevelId) || CellTable == null;
+    public bool IsEmpty => string.IsNullOrEmpty(LevelId) || CellTable == null;
 }

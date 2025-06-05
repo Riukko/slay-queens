@@ -77,5 +77,4 @@ MonoBehaviour:
   GridMargins: 80
   GridGenerator: {fileID: 0}
   autoResizeCells: 1
-  setRandomColors: 0
   cellPrefab: {fileID: 7992231221614212600, guid: cd9f8772626c8504097c0885d22b78ca, type: 3}

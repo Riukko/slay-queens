@@ -3,6 +3,6 @@ using UnityEngine;
 
 public class LevelDetailsView : MonoBehaviour
 {
-    public TextMeshProUGUI LevelNameText;
+    public TMP_InputField LevelNameInputField;
     public TextMeshProUGUI LevelIdText;
 }
