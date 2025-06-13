@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-public class LevelDataManager : MonoBehaviour
+public class LevelDataManager : Singleton<LevelDataManager>
 {
     private GameLevel _currentLevel = null;
     public GameLevel CurrentLevel
@@ -77,23 +77,4 @@ public class LevelDataManager : MonoBehaviour
     {
         //TODO
     }
-
-    #region Singleton
-    private static LevelDataManager instance = null;
-    public static LevelDataManager Instance => instance;
-    public static bool HasInstance => instance != null;
-    private void Awake()
-    {
-        if (instance != null && instance != this)
-        {
-            Destroy(this.gameObject);
-            return;
-        }
-        else
-        {
-            instance = this;
-        }
-        DontDestroyOnLoad(this.gameObject);
-    }
-    #endregion
 }

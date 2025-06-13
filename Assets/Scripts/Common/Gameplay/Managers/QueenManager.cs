@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class QueenManager : MonoBehaviour
+public class QueenManager : Singleton<QueenManager>
 {
     public List<Queen> Queens = new();
 
@@ -39,24 +39,4 @@ public class QueenManager : MonoBehaviour
             }
         }
     }
-
-    #region Singleton
-    private static QueenManager instance = null;
-    public static QueenManager Instance => instance;
-    public static bool HasInstance => instance != null;
-
-    private void Awake()
-    {
-        if (instance != null && instance != this)
-        {
-            Destroy(this.gameObject);
-            return;
-        }
-        else
-        {
-            instance = this;
-        }
-        DontDestroyOnLoad(this.gameObject);
-    }
-    #endregion
 }

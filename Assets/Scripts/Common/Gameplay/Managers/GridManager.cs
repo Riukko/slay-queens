@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class GridManager : MonoBehaviour
+public class GridManager : Singleton<GridManager>
 {
     [Range(1, 11)]
     public int GridSize;
@@ -44,23 +44,4 @@ public class GridManager : MonoBehaviour
         GridSize = parsedTable.GetLength(0);
         CellTable = GridGenerator.GenerateGridFromTable(GridSize, GridMargins, autoResizeCells, cellPrefab, parsedTable);
     }
-
-    #region Singleton
-    private static GridManager instance = null;
-    public static GridManager Instance => instance;
-    public static bool HasInstance => instance != null;
-    private void Awake()
-    {
-        if (instance != null && instance != this)
-        {
-            Destroy(this.gameObject);
-            return;
-        }
-        else
-        {
-            instance = this;
-        }
-        DontDestroyOnLoad(this.gameObject);
-    }
-    #endregion
 }
