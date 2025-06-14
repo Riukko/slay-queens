@@ -102,11 +102,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 5900123696270774999}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 46a8e357375348c45abae2b2c4d9912e, type: 3}
+  m_Script: {fileID: 11500000, guid: b7ab9a01592d1e44fa7c0c6b0b89f4c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ClickingAction: 0
-  AppliedColor: 10
+  AppliedColor: 0
   LevelEditorButtonImg: {fileID: 0}
 --- !u!114 &9863394500822402
 MonoBehaviour:

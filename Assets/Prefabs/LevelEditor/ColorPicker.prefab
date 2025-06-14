@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1840481715064093828}
   - component: {fileID: 3393681282939841434}
   - component: {fileID: 4206653766593288580}
+  - component: {fileID: 707773865827592580}
   m_Layer: 5
   m_Name: Colors
   m_TagString: Untagged
@@ -77,6 +78,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 0
   m_VerticalFit: 1
+--- !u!114 &707773865827592580
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2799578154147640737}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 144886010c198b34899dfe0a1de6d70c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ColorButtonPrefab: {fileID: 5900123696270774999, guid: f107774757457094ea538578608dcbf1, type: 3}
+  ColorPickerParent: {fileID: 1840481715064093828}
 --- !u!1 &4895588512254252670
 GameObject:
   m_ObjectHideFlags: 0
@@ -152,11 +167,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 4895588512254252670}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bf2578ce28ab9a744ba4942889c24e1d, type: 3}
+  m_Script: {fileID: 11500000, guid: 1546880645b28574f895a8837e61c0a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ColorButtonPrefab: {fileID: 5900123696270774999, guid: f107774757457094ea538578608dcbf1, type: 3}
-  ColorPickerParent: {fileID: 1840481715064093828}
+  CurrentStatus: 0
+  CurrentColor: 10
 --- !u!1001 &5276846217695452024
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -165,6 +180,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1020892078654546432}
     m_Modifications:
+    - target: {fileID: 9863394500822402, guid: f107774757457094ea538578608dcbf1, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 3843652330708308745}
+    - target: {fileID: 9863394500822402, guid: f107774757457094ea538578608dcbf1, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnColorButtonClick
+      objectReference: {fileID: 0}
+    - target: {fileID: 9863394500822402, guid: f107774757457094ea538578608dcbf1, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: LevelEditorButton, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 3340808268301820506, guid: f107774757457094ea538578608dcbf1, type: 3}
       propertyPath: ColorStatus
       value: 2
@@ -269,11 +296,35 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 3340808268301820506, guid: f107774757457094ea538578608dcbf1, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5900123696270774999, guid: f107774757457094ea538578608dcbf1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3843652330708308745}
   m_SourcePrefab: {fileID: 100100000, guid: f107774757457094ea538578608dcbf1, type: 3}
+--- !u!1 &1790863169762904495 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5900123696270774999, guid: f107774757457094ea538578608dcbf1, type: 3}
+  m_PrefabInstance: {fileID: 5276846217695452024}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3843652330708308745
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1790863169762904495}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7ab9a01592d1e44fa7c0c6b0b89f4c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ClickingAction: 2
+  AppliedColor: 0
+  LevelEditorButtonImg: {fileID: 0}
 --- !u!224 &3255718897183244627 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7211877890575276587, guid: f107774757457094ea538578608dcbf1, type: 3}
@@ -287,6 +338,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1020892078654546432}
     m_Modifications:
+    - target: {fileID: 9863394500822402, guid: f107774757457094ea538578608dcbf1, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 6932661132255339225}
+    - target: {fileID: 9863394500822402, guid: f107774757457094ea538578608dcbf1, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnColorButtonClick
+      objectReference: {fileID: 0}
+    - target: {fileID: 9863394500822402, guid: f107774757457094ea538578608dcbf1, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: LevelEditorButton, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 3340808268301820506, guid: f107774757457094ea538578608dcbf1, type: 3}
       propertyPath: ClickingAction
       value: 1
@@ -387,13 +450,37 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 3340808268301820506, guid: f107774757457094ea538578608dcbf1, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5900123696270774999, guid: f107774757457094ea538578608dcbf1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6932661132255339225}
   m_SourcePrefab: {fileID: 100100000, guid: f107774757457094ea538578608dcbf1, type: 3}
 --- !u!224 &1266136022075785304 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7211877890575276587, guid: f107774757457094ea538578608dcbf1, type: 3}
   m_PrefabInstance: {fileID: 8468883566445255283}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2623055988307609764 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5900123696270774999, guid: f107774757457094ea538578608dcbf1, type: 3}
+  m_PrefabInstance: {fileID: 8468883566445255283}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6932661132255339225
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2623055988307609764}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7ab9a01592d1e44fa7c0c6b0b89f4c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ClickingAction: 1
+  AppliedColor: 0
+  LevelEditorButtonImg: {fileID: 0}
