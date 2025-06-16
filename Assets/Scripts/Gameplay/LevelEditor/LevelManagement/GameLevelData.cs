@@ -1,8 +1,5 @@
-using System.Collections.Generic;
-using UnityEngine;
-
 [System.Serializable]
-public class GameLevel
+public class GameLevelData
 {
     public string LevelId;
     public string LevelName;

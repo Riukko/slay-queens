@@ -19,7 +19,7 @@ public class GridManager : Singleton<GridManager>
 
     public void Start()
     {
-        if(GridGenerator == null)
+        if (GridGenerator == null)
         {
             Debug.LogError("The Grid Generator object should be passed to the Grid Data Manager");
             return;

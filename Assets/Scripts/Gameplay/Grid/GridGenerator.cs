@@ -31,7 +31,7 @@ public class GridGenerator : MonoBehaviour
         {
             for (int x = 0; x < gridSize; x++)
             {
-                cellTable[x,y] = InstantiateCell(cellPrefab, new Vector2Int(x, y), CellColorGroup.WHITE);
+                cellTable[x, y] = InstantiateCell(cellPrefab, new Vector2Int(x, y), CellColorGroup.WHITE);
             }
         }
 
@@ -59,7 +59,7 @@ public class GridGenerator : MonoBehaviour
         {
             for (int x = 0; x < gridSize; x++)
             {
-                cellTable[x, y] = InstantiateCell(cellPrefab, new Vector2Int(x, y), CellGroupColorPalette.GetColorGroupAtIndex(parsedTable[x,y]));
+                cellTable[x, y] = InstantiateCell(cellPrefab, new Vector2Int(x, y), CellGroupColorPalette.GetColorGroupAtIndex(parsedTable[x, y]));
             }
         }
 

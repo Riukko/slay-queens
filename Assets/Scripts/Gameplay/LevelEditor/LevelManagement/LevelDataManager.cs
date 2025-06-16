@@ -1,13 +1,10 @@
-using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 
 public class LevelDataManager : Singleton<LevelDataManager>
 {
-    private GameLevel _currentLevel = null;
-    public GameLevel CurrentLevel
+    private GameLevelData _currentLevel = null;
+    public GameLevelData CurrentLevel
     {
         get => _currentLevel;
         set
@@ -30,7 +27,7 @@ public class LevelDataManager : Singleton<LevelDataManager>
         if (!GridManager.HasInstance)
             return;
 
-        int[,] savedLevelTable = LevelFileHelpers.ExtractGridDataTable(GridManager.Instance.CellTable) ; ;
+        int[,] savedLevelTable = LevelFileHelpers.ExtractGridDataTable(GridManager.Instance.CellTable); ;
         string newLevelName = LevelFileHelpers.GetValidatedLevelFileName(levelDetailsView.LevelNameInputField.text);
 
         if (!CurrentLevel.IsEmpty)
@@ -47,7 +44,7 @@ public class LevelDataManager : Singleton<LevelDataManager>
         }
         else
         {
-            var newLevel = new GameLevel
+            var newLevel = new GameLevelData
             {
                 LevelId = Guid.NewGuid().ToString(),
                 CellTable = savedLevelTable,
@@ -61,8 +58,8 @@ public class LevelDataManager : Singleton<LevelDataManager>
 
     public void LoadLevelFromFile(string levelFileName)
     {
-        GameLevel level = LevelFileHelpers.DeserializeLevelFromFile(levelFileName);
-        if(level != null)
+        GameLevelData level = LevelFileHelpers.DeserializeLevelFromFileName(levelFileName);
+        if (level != null)
         {
             CurrentLevel = level;
             GridManager.Instance.GenerateGridFromTable(level.CellTable);

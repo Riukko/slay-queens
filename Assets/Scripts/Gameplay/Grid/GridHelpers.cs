@@ -73,10 +73,10 @@ public static class GridHelpers
                 Cell cell = cellTable[x, y];
                 CellOutlines outlines = cell.CellOutlines;
 
-                if(x != gridSize - 1)
+                if (x != gridSize - 1)
                     outlines.RightOutlineVisible(cell.CellGroup != cellTable[x + 1, y].CellGroup);
 
-                if(y != gridSize - 1)
+                if (y != gridSize - 1)
                     outlines.BottomOutlineVisible(cell.CellGroup != cellTable[x, y + 1].CellGroup);
             }
         }
@@ -96,16 +96,16 @@ public static class GridHelpers
                 Cell cell = cellTable[x, y];
                 CellOutlines outlines = cell.CellOutlines;
 
-                if(x == 0)
+                if (x == 0)
                     outlines.LeftOutlineVisible(true);
 
-                if(x == gridSize - 1)
+                if (x == gridSize - 1)
                     outlines.RightOutlineVisible(true);
 
-                if(y == 0)
+                if (y == 0)
                     outlines.TopOutlineVisible(true);
 
-                if(y == gridSize - 1)
+                if (y == gridSize - 1)
                     outlines.BottomOutlineVisible(true);
             }
         }

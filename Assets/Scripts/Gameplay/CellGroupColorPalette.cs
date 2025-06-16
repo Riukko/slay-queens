@@ -67,6 +67,6 @@ public static class CellGroupColorPalette
 
     }
 
-    public static int GetColorIndexFromGroup(this CellColorGroup colorGroup) => (int) colorGroup;
+    public static int GetColorIndexFromGroup(this CellColorGroup colorGroup) => (int)colorGroup;
 }
 

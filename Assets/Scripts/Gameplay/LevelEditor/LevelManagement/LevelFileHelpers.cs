@@ -1,21 +1,22 @@
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
 public static class LevelFileHelpers
 {
-    public static readonly string LevelFilePath = Path.Combine(Application.streamingAssetsPath, "Levels");
+    public static readonly string LevelsFilePath = Path.Combine(Application.streamingAssetsPath, "Levels");
     public static string LevelFileNamePrefix = "GL_";
 
-    public static string GetLevelFilePathFromName(string levelFileName) => Path.Combine(LevelFilePath, $"{levelFileName}.json").Replace('\\', '/');
+    public static string GetLevelFilePathFromName(string levelFileName) => Path.Combine(LevelsFilePath, $"{levelFileName}.json").Replace('\\', '/');
 
-    public static void SaveLevelFileAsNew(GameLevel gameLevel)
+    public static void SaveLevelFileAsNew(GameLevelData gameLevel)
     {
-        if (!Directory.Exists(LevelFilePath))
+        if (!Directory.Exists(LevelsFilePath))
         {
-            Directory.CreateDirectory(LevelFilePath);
-            Debug.Log($"Directory created: {LevelFilePath}");
+            Directory.CreateDirectory(LevelsFilePath);
+            Debug.Log($"Directory created: {LevelsFilePath}");
         }
 
         string filePath = GetLevelFilePathFromName(gameLevel.LevelName);
@@ -33,7 +34,7 @@ public static class LevelFileHelpers
         Debug.Log($"Level saved: {filePath}");
     }
 
-    public static void OverwriteLevelFile(GameLevel gameLevel, string oldName = "")
+    public static void OverwriteLevelFile(GameLevelData gameLevel, string oldName = "")
     {
 
         //TODO : Save the actual new level
@@ -75,18 +76,62 @@ public static class LevelFileHelpers
         return name.StartsWith(LevelFileNamePrefix) ? name : $"{LevelFileNamePrefix}{name}";
     }
 
-    public static GameLevel DeserializeLevelFromFile(string levelFileName)
+    public static GameLevelData DeserializeLevelFromFileName(string levelFileName)
     {
-        string levelFilePath = LevelFileHelpers.GetLevelFilePathFromName(levelFileName);
+        string levelFilePath = GetLevelFilePathFromName(levelFileName);
         if (!File.Exists(levelFilePath))
         {
             Debug.LogError($"Couldn't find file {levelFilePath} to load it");
             return null;
         }
 
-        string levelJson = File.ReadAllText(levelFilePath);
-        GameLevel deserializedLevel = JsonConvert.DeserializeObject<GameLevel>(levelJson);
+        try
+        {
+            string levelJson = File.ReadAllText(levelFilePath);
+            return JsonConvert.DeserializeObject<GameLevelData>(levelJson); ;
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Failed to deserialize level: {ex.Message}");
+            return null;
+        }
+    }
 
-        return deserializedLevel;
+    public static GameLevelData DeserializeLevelFromPath(string levelFilePath)
+    {
+        if (!File.Exists(levelFilePath))
+        {
+            Debug.LogError($"Couldn't find file {levelFilePath} to load it");
+            return null;
+        }
+
+        try
+        {
+            string levelJson = File.ReadAllText(levelFilePath);
+            return JsonConvert.DeserializeObject<GameLevelData>(levelJson); ;
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Failed to deserialize level {levelFilePath}: {ex.Message}");
+            return null;
+        }
+    }
+
+    public static List<GameLevelData> LoadAllFoundLevels(string overridePath = null)
+    {
+        List<GameLevelData> foundGameLevels = new();
+        foreach (string filePath in Directory.GetFiles(overridePath == null ? LevelsFilePath : overridePath, "*.json"))
+        {
+            try
+            {
+                foundGameLevels.Add(DeserializeLevelFromPath(filePath));
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"Error when trying to load {filePath} : {ex.Message}");
+                continue;
+            }
+        }
+        return foundGameLevels;
     }
 }
