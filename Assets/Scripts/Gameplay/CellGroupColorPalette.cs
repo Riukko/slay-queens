@@ -19,6 +19,8 @@ public enum CellColorGroup
 
 public static class CellGroupColorPalette
 {
+    public static int MaxColorCount => Enum.GetValues(typeof(CellColorGroup)).Length;
+
     private static readonly Dictionary<CellColorGroup, Color> groupColors = new()
     {
         { CellColorGroup.GREEN,   new Color32(168, 255, 158, 255) },

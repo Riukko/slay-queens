@@ -11,7 +11,7 @@ public static class LevelFileHelpers
 
     public static string GetLevelFilePathFromName(string levelFileName) => Path.Combine(LevelsFilePath, $"{levelFileName}.json").Replace('\\', '/');
 
-    public static void SaveLevelFileAsNew(GameLevelData gameLevel)
+    public static bool SaveLevelFile(GameLevelData gameLevel)
     {
         if (!Directory.Exists(LevelsFilePath))
         {
@@ -21,36 +21,61 @@ public static class LevelFileHelpers
 
         string filePath = GetLevelFilePathFromName(gameLevel.LevelName);
         string json = JsonConvert.SerializeObject(gameLevel);
+
         try
         {
             File.WriteAllText(filePath, json);
         }
         catch (Exception e)
         {
-            Debug.LogError($"Saving file {filePath} has failed with error : {e.Message}");
-            return;
+            Debug.LogError($"Saving file {filePath} failed with error: {e.Message}");
+            return false;
         }
 
         Debug.Log($"Level saved: {filePath}");
+
+        return true;
     }
 
-    public static void OverwriteLevelFile(GameLevelData gameLevel, string oldName = "")
+    public static bool SaveLevelFileAsNew(GameLevelData gameLevel)
     {
+        gameLevel.LevelId = Guid.NewGuid().ToString();
+        return SaveLevelFile(gameLevel);
+    }
 
-        //TODO : Save the actual new level
+    public static bool OverwriteLevelFile(GameLevelData gameLevel, string oldName = "")
+    {
+        bool saveResult = SaveLevelFile(gameLevel);
 
-        if (!string.IsNullOrEmpty(oldName))
+        if (!string.IsNullOrEmpty(oldName) && saveResult)
         {
             string oldFilePath = GetLevelFilePathFromName(oldName);
             if (File.Exists(oldFilePath))
             {
                 File.Delete(oldFilePath);
+
+                //Also delete .meta file
+                string metaFilePath = oldFilePath + ".meta";
+                if (File.Exists(metaFilePath))
+                {
+                    File.Delete(metaFilePath);
+                }
+                else
+                {
+                    Debug.LogError($"Couldn't find file meta file {metaFilePath}, couldn't delete it");
+                    return false;
+                }
+
+                Debug.Log($"Deleted old level file and meta: {oldFilePath}");
             }
             else
             {
                 Debug.LogError($"Couldn't find file {oldFilePath}, couldn't delete it");
+                return false;
             }
         }
+
+        return saveResult;
     }
 
     public static int[,] ExtractGridDataTable(Cell[,] cellTable)

@@ -1,33 +1,37 @@
-using System;
-using TMPro;
 using UnityEngine;
+using TMPro;
+using UnityEngine.UI;
+using System;
 
-public class ConfirmationPopup : MonoBehaviour
+public class ConfirmationPopup : Popup
 {
-    [SerializeField] private TextMeshProUGUI popupMessage;
-
-    [SerializeField] private TextMeshProUGUI confirmButtonText;
-
+    [Header("Confirmation Popup")]
     [SerializeField] private TextMeshProUGUI cancelButtonText;
-    private Action onConfirmCallback;
+    [SerializeField] private Image cancelButtonImg;
+    [SerializeField] private Color cancelBtnDefaultColor;
 
-    public void Show(string message, Action onConfirm, string confirmBtnTxt = "Yes", string cancelBtnTxt = "No")
-    {
-        onConfirmCallback = onConfirm;
-        popupMessage.text = message;
-        confirmButtonText.text = confirmBtnTxt;
-        cancelButtonText.text = cancelBtnTxt;
-        gameObject.SetActive(true);
-    }
+    private Action onCancelCallback;
 
-    public void OnClickConfirm()
+    public void Show(
+        string message,
+        Action onConfirm,
+        Action onCancel = null,
+        PopupStyle? style = null)
     {
-        onConfirmCallback?.Invoke();
-        gameObject.SetActive(false);
+        base.Show(message, onConfirm, style);
+
+        onCancelCallback = onCancel;
+
+        var s = style ?? default;
+
+        cancelButtonText.text = string.IsNullOrEmpty(s.CancelButtonText) ? "Cancel" : s.CancelButtonText;
+        cancelButtonText.color = s.ButtonTextColor ?? btnDefaultTxtColor;
+        cancelButtonImg.color = s.CancelButtonColor ?? cancelBtnDefaultColor;
     }
 
     public void OnClickCancel()
     {
+        onCancelCallback?.Invoke();
         gameObject.SetActive(false);
     }
 }

@@ -11,9 +11,6 @@ public class LevelSelectorUI : MonoBehaviour
     [SerializeField]
     private GameObject selectableLevelPrefab;
 
-    [SerializeField]
-    private GameObject confirmationTab;
-
     private List<GameObject> selectableLevelList = new();
 
     private void OnEnable()
@@ -69,7 +66,22 @@ public class LevelSelectorUI : MonoBehaviour
 
     private void HandleLevelSelected(GameLevelData levelData)
     {
-        Debug.Log($"LEVEL {levelData.LevelName} SELECTED");
+        UIManager.Instance
+            .GetUIElement<ConfirmationPopup>(AccessibleUIElementTag.ConfirmationPopup)
+            .Show(
+                $"Do you want to load {levelData.LevelName}?" + (LevelDataManager.Instance.HasUnsavedChanges ? "\n(You currently have unsaved changes)" : ""),
+                () =>
+                {
+                    LevelDataManager.Instance.LoadLevelFromData(levelData);
+                    gameObject.SetActive(false);
+                },
+                null,
+                new PopupStyle
+                {
+                    ConfirmButtonText = "Select",
+                    CancelButtonText = "Cancel"
+                }
+            );
     }
 
     //public Texture2D GeneratePreviewTexture(GameLevel level, CellGroupColorPalette palette, int pixelPerCell = 4)

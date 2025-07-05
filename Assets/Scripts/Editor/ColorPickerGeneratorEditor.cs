@@ -13,7 +13,7 @@ public class ColorPickerGeneratorEditor : Editor
         if (GUILayout.Button("Generate colors"))
         {
             generator.ClearColors();
-            generator.InitializeColorPicker();
+            generator.GenerateColorPicker(GridManager.Instance.GridSize);
         }
     }
 }

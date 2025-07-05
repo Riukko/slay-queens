@@ -47,6 +47,11 @@ public static class GridHelpers
 
         return neighbors;
     }
+
+    public static bool AreOnTheSameRow(Vector2Int a, Vector2Int b) =>  a.y == b.y;
+
+    public static bool AreOnTheSameColumn(Vector2Int a, Vector2Int b) => a.x == b.x;
+
     public static bool AreDirectDiagonalNeighbors(Vector2Int a, Vector2Int b, int gridSize)
     {
         if (b.x < 0 || b.x >= gridSize || b.y < 0 || b.y >= gridSize)
@@ -56,6 +61,25 @@ public static class GridHelpers
         int dy = Mathf.Abs(a.y - b.y);
 
         return dx == 1 && dy == 1;
+    }
+
+    public static bool HaveSameColor(Vector2Int a, Vector2Int b, Cell[,] cellGrid = null)
+    {
+        if (!GridManager.HasInstance && cellGrid == null)
+        {
+            throw new System.Exception("GridManager instance is not available.");
+        }
+        else if (cellGrid == null)
+        {
+            cellGrid = GridManager.Instance.CellTable;
+        }
+
+        return cellGrid[a.x, a.y].CellGroup == cellGrid[b.x, b.y].CellGroup;
+    }
+
+    public static bool HaveSameColor(Vector2Int a, Vector2Int b, int[,] cellGrid)
+    {
+        return cellGrid[a.x, a.y] == cellGrid[b.x, b.y];
     }
 
 

@@ -13,17 +13,23 @@ public class GridGenerator : MonoBehaviour
     [SerializeField]
     private RectTransform rectTransform;
 
-    public Cell[,] GenerateEmptyGrid(int gridSize, int gridMargins, bool autoResizeCells, GameObject cellPrefab)
+    private Cell[,] GenerateGridCore(
+    int gridSize,
+    int gridMargins,
+    bool autoResizeCells,
+    GameObject cellPrefab,
+    System.Func<int, int, CellColorGroup> colorSelector,
+    bool highlightInnerLines = true)
     {
         Cell[,] cellTable = new Cell[gridSize, gridSize];
 
         if (cellPrefab == null)
         {
-            Debug.LogWarning("GridResizer needs a button prefab");
+            Debug.LogWarning("GridGenerator needs a button prefab");
             return null;
         }
 
-        ClearGridVisuals();
+        DestroyGrid();
 
         grid.constraintCount = gridSize;
 
@@ -31,52 +37,57 @@ public class GridGenerator : MonoBehaviour
         {
             for (int x = 0; x < gridSize; x++)
             {
-                cellTable[x, y] = InstantiateCell(cellPrefab, new Vector2Int(x, y), CellColorGroup.WHITE);
+                var color = colorSelector(x, y);
+                cellTable[x, y] = InstantiateCell(cellPrefab, new Vector2Int(x, y), color);
             }
         }
 
         GridHelpers.ResizeGrid(grid, rectTransform, gridSize, gridMargins, autoResizeCells);
+
+        if (highlightInnerLines)
+            GridHelpers.HighlightCellOutlinesInGrid(cellTable);
+
         GridHelpers.HighlightGridOuterLines(cellTable);
 
         return cellTable;
+    }
+
+    public Cell[,] GenerateEmptyGrid(int gridSize, int gridMargins, bool autoResizeCells, GameObject cellPrefab)
+    {
+        return GenerateGridCore(
+            gridSize,
+            gridMargins,
+            autoResizeCells,
+            cellPrefab,
+            (x, y) => CellColorGroup.WHITE,
+            highlightInnerLines: false
+        );
     }
 
     public Cell[,] GenerateGridFromTable(int gridSize, int gridMargins, bool autoResizeCells, GameObject cellPrefab, int[,] parsedTable)
     {
-        Cell[,] cellTable = new Cell[gridSize, gridSize];
-
-        if (cellPrefab == null)
-        {
-            Debug.LogError("GridResizer needs a button prefab");
-            return null;
-        }
-
-        ClearGridVisuals();
-
-        grid.constraintCount = gridSize;
-
-        for (int y = 0; y < gridSize; y++)
-        {
-            for (int x = 0; x < gridSize; x++)
-            {
-                cellTable[x, y] = InstantiateCell(cellPrefab, new Vector2Int(x, y), CellGroupColorPalette.GetColorGroupAtIndex(parsedTable[x, y]));
-            }
-        }
-
-        GridHelpers.ResizeGrid(grid, rectTransform, gridSize, gridMargins, autoResizeCells);
-        GridHelpers.HighlightCellOutlinesInGrid(cellTable);
-        GridHelpers.HighlightGridOuterLines(cellTable);
-
-        return cellTable;
+        return GenerateGridCore(
+            gridSize,
+            gridMargins,
+            autoResizeCells,
+            cellPrefab,
+            (x, y) => CellGroupColorPalette.GetColorGroupAtIndex(parsedTable[x, y]),
+            highlightInnerLines: true
+        );
     }
 
-    public void ClearGridVisuals()
+    public void DestroyGrid()
     {
         for (int i = transform.childCount - 1; i >= 0; i--)
         {
             Transform child = transform.GetChild(i);
             DestroyImmediate(child.gameObject);
         }
+    }
+
+    public void ShowGrid(bool show)
+    {
+        grid.gameObject.SetActive(show);
     }
 
     private Cell InstantiateCell(GameObject cellPrefab, Vector2Int coordinates, CellColorGroup colorGroup)

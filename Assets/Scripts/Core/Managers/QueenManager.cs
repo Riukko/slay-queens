@@ -1,26 +1,36 @@
+using System;
 using System.Collections.Generic;
 
 public class QueenManager : Singleton<QueenManager>
 {
     public List<Queen> Queens = new();
 
-    public void AddQueen(Queen queenToAdd)
+    public static event Action<Queen> OnQueenAddedEvent;
+    public static event Action<Queen> OnQueenRemovedEvent;
+
+    public void AddQueen(Queen queenToAdd, bool updateConflicts = true)
     {
         Queens.Add(queenToAdd);
 
-        UpdateQueenConflicts(queenToAdd);
+        if(updateConflicts)
+            UpdateQueenConflicts(queenToAdd);
+
+        OnQueenAddedEvent?.Invoke(queenToAdd);
     }
 
-    public void RemoveQueen(Queen queenToRemove)
+    public void RemoveQueen(Queen queenToRemove, bool updateConflicts = true)
     {
         Queens.Remove(queenToRemove);
 
-        foreach (Queen queen in Queens)
+        if (updateConflicts)
         {
-            queen.RemoveConflict(queenToRemove);
+           foreach (Queen queen in Queens)
+            {
+                queen.RemoveConflict(queenToRemove);
+            }
         }
 
-        GridManager.Instance.CellTable[queenToRemove.Coordinates.x, queenToRemove.Coordinates.y].IsCellConflicted = false;
+        OnQueenRemovedEvent?.Invoke(queenToRemove);
     }
 
     public void UpdateQueenConflicts(Queen queenToCheck)
@@ -29,13 +39,22 @@ public class QueenManager : Singleton<QueenManager>
         {
             if (queen == queenToCheck) continue;
 
-            if (queen.Coordinates.x == queenToCheck.Coordinates.x
-                || queen.Coordinates.y == queenToCheck.Coordinates.y
-                || GridHelpers.AreDirectDiagonalNeighbors(queen.Coordinates, queenToCheck.Coordinates, GridManager.Instance.GridSize))
+            if (GridHelpers.AreOnTheSameColumn(queen.Coordinates, queenToCheck.Coordinates)
+                || GridHelpers.AreOnTheSameRow(queen.Coordinates, queenToCheck.Coordinates)
+                || GridHelpers.AreDirectDiagonalNeighbors(queen.Coordinates, queenToCheck.Coordinates, GridManager.Instance.GridSize)
+                || GridHelpers.HaveSameColor(queen.Coordinates, queenToCheck.Coordinates))
             {
                 queenToCheck.AddConflict(queen);
                 queen.AddConflict(queenToCheck);
             }
+        }
+    }
+
+    public void UpdateAllQueensConflicts()
+    {
+        foreach (Queen queen in Queens)
+        {
+            UpdateQueenConflicts(queen);
         }
     }
 }

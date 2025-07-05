@@ -12,12 +12,12 @@ public class GridManagerEditor : Editor
 
         if (GUILayout.Button("Generate grid"))
         {
-            gridManager.GenerateGrid();
+            gridManager.GenerateEmptyGrid();
         }
 
         if (GUILayout.Button("Delete grid"))
         {
-            gridManager.ClearGrid();
+            gridManager.DestroyGrid();
         }
 
         if(GUILayout.Button("Generate cell outlines"))

@@ -45,21 +45,31 @@ public abstract class Cell : MonoBehaviour, IPointerEnterHandler, IPointerDownHa
         get => _queen;
         set
         {
-            if (value == null)
-            {
-                queenSprite.enabled = false;
-                QueenManager.Instance.RemoveQueen(_queen);
-                _queen.OnConflictsChanged -= UpdateConflictStatus;
-                IsCellConflicted = false;
-            }
-            else
-            {
-                queenSprite.enabled = true;
-                value.OnConflictsChanged += UpdateConflictStatus;
-                QueenManager.Instance.AddQueen(value);
-            }
+            if (_queen != null)
+                OnQueenRemoved(_queen);
+
+            if (value != null)
+                OnQueenAssigned(value);
+
             _queen = value;
         }
+    }
+
+    public bool HasQueen => Queen != null;
+
+    protected virtual void OnQueenAssigned(Queen newQueen)
+    {
+        queenSprite.enabled = true;
+        newQueen.OnConflictsChanged += UpdateConflictStatus;
+        QueenManager.Instance.AddQueen(newQueen);
+    }
+
+    protected virtual void OnQueenRemoved(Queen oldQueen)
+    {
+        queenSprite.enabled = false;
+        QueenManager.Instance.RemoveQueen(oldQueen);
+        oldQueen.OnConflictsChanged -= UpdateConflictStatus;
+        IsCellConflicted = false;
     }
 
 
@@ -75,7 +85,23 @@ public abstract class Cell : MonoBehaviour, IPointerEnterHandler, IPointerDownHa
 
     public CellOutlines CellOutlines;
 
-    public CellColorGroup CellGroup = CellColorGroup.WHITE;
+    private CellColorGroup _cellGroup = CellColorGroup.WHITE;
+
+    public CellColorGroup CellGroup
+    {
+        get => _cellGroup;
+        set
+        {
+            _cellGroup = value;
+            ApplyColor();
+        }
+    }
+
+    private void ApplyColor()
+    {
+        CellImage.color = CellGroupColorPalette.GetColor(CellGroup);
+    }
+
     #endregion
 
     #region Protected Variables
@@ -107,15 +133,9 @@ public abstract class Cell : MonoBehaviour, IPointerEnterHandler, IPointerDownHa
     public void InitializeCell(Vector2Int coordinates, CellColorGroup colorGroup)
     {
         Coordinates = coordinates;
-        CellGroup = colorGroup;
         CellText = GetComponentInChildren<TextMeshProUGUI>();
         CellImage = GetComponent<Image>();
-        ApplyColor();
-    }
-
-    public void ApplyColor()
-    {
-        CellImage.color = CellGroupColorPalette.GetColor(CellGroup);
+        CellGroup = colorGroup;
     }
 
     #region Pointer Events
