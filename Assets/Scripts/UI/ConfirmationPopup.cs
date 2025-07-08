@@ -1,11 +1,11 @@
-using UnityEngine;
-using TMPro;
-using UnityEngine.UI;
 using System;
+using System.Threading.Tasks;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class ConfirmationPopup : Popup
 {
-    [Header("Confirmation Popup")]
     [SerializeField] private TextMeshProUGUI cancelButtonText;
     [SerializeField] private Image cancelButtonImg;
     [SerializeField] private Color cancelBtnDefaultColor;
@@ -18,10 +18,27 @@ public class ConfirmationPopup : Popup
         Action onCancel = null,
         PopupStyle? style = null)
     {
-        base.Show(message, onConfirm, style);
+        SetupPopupBase(message, style);
+        SetupCancel(style);
 
+        onConfirmCallback = onConfirm;
         onCancelCallback = onCancel;
 
+        gameObject.SetActive(true);
+    }
+
+    public override Task<bool> ShowAsync(string message, PopupStyle? style = null)
+    {
+        tcs = new TaskCompletionSource<bool>();
+        SetupPopupBase(message, style);
+        SetupCancel(style);
+
+        gameObject.SetActive(true);
+        return tcs.Task;
+    }
+
+    private void SetupCancel(PopupStyle? style)
+    {
         var s = style ?? default;
 
         cancelButtonText.text = string.IsNullOrEmpty(s.CancelButtonText) ? "Cancel" : s.CancelButtonText;
@@ -32,6 +49,7 @@ public class ConfirmationPopup : Popup
     public void OnClickCancel()
     {
         onCancelCallback?.Invoke();
+        tcs?.TrySetResult(false);
         gameObject.SetActive(false);
     }
 }

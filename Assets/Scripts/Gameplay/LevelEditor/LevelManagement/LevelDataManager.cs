@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class LevelDataManager : Singleton<LevelDataManager>
@@ -26,22 +27,20 @@ public class LevelDataManager : Singleton<LevelDataManager>
         LevelDetailsView.OnLevelNameChangedEvent += HandleLevelNameChanged;
     }
 
-    public void SaveCurrentLevel()
+    public async void SaveCurrentLevel()
     {
         if (!GridManager.HasInstance)
             return;
 
         if (string.IsNullOrEmpty(CurrentLevel.LevelName))
         {
-            UIManager.Instance.GetUIElement<InformationPopup>(AccessibleUIElementTag.InformationPopup)
-                .Show("Please enter a name for the level", null);
+            UIManager.Instance.ShowInfo("Please enter a name for the level");
             return;
         }
 
         if (!HasUnsavedChanges)
         {
-            UIManager.Instance.GetUIElement<InformationPopup>(AccessibleUIElementTag.InformationPopup)
-            .Show("No changes to save", null);
+            UIManager.Instance.ShowInfo("No changes to save");
             return;
         }
 
@@ -54,27 +53,33 @@ public class LevelDataManager : Singleton<LevelDataManager>
         CurrentLevel.CellTable = savedLevelTable;
         CurrentLevel.IsLevelSolvable = levelSolvability;
 
-        if (!CurrentLevel.IsEmpty)
+        try
         {
-            saveResult = ChooseOverwriteOrSaveAsNew();
+            saveResult = CurrentLevel.IsEmpty
+                ? SaveLevelFileAsNew()
+                : await ChooseOverwriteOrSaveAsNew();
         }
-        else
+        catch (Exception ex)
         {
-            saveResult = LevelFileHelpers.SaveLevelFileAsNew(CurrentLevel);
+            Debug.LogError($"Error while saving level: {ex.Message}");
+            UIManager.Instance.ShowInfo("An unexpected error occurred while saving.");
+            return;
         }
+
+        UIManager.Instance
+            .GetUIElement<InformationPopup>(AccessibleUIElementTag.InformationPopup)
+            .Show(saveResult ? $"Level '{CurrentLevel.LevelName}' saved successfully" : $"Unable to save '{CurrentLevel.LevelName}", null);
 
         HasUnsavedChanges = !saveResult;
     }
 
-    private bool ChooseOverwriteOrSaveAsNew()
+    private async Task<bool> ChooseOverwriteOrSaveAsNew()
     {
         bool saveResult = false;
-        UIManager.Instance
+        bool overwrite = await UIManager.Instance
             .GetUIElement<ConfirmationPopup>(AccessibleUIElementTag.ConfirmationPopup)
-            .Show(
+            .ShowAsync(
                 "Would you like to overwrite current level or save it as a new one?",
-                () => saveResult = HandleLevelOverWriting(),
-                () => saveResult = SaveLevelFileAsNew(),
                 new PopupStyle
                 {
                     ConfirmButtonColor = Color.green,
@@ -83,6 +88,15 @@ public class LevelDataManager : Singleton<LevelDataManager>
                     CancelButtonText = "Save As New"
                 }
             );
+
+        if (overwrite)
+        {
+            saveResult = TryOverwriteLevel();
+        }
+        else
+        {
+            saveResult = SaveLevelFileAsNew();
+        }
 
         return saveResult;
     }
@@ -97,7 +111,7 @@ public class LevelDataManager : Singleton<LevelDataManager>
         return false;
     }
 
-    private bool HandleLevelOverWriting()
+    private bool TryOverwriteLevel()
     {
         if (string.Equals(CurrentLevel.LevelName, CurrentLevel.LastSavedFileName, StringComparison.OrdinalIgnoreCase))
         {
@@ -168,5 +182,36 @@ public class LevelDataManager : Singleton<LevelDataManager>
 
         QueenManager.Instance.UpdateAllQueensConflicts();
         GridManager.Instance.RefreshAllCellsConflict();
+    }
+    public void DeleteCurrentLevel()
+    {
+        UIManager.Instance
+            .GetUIElement<ConfirmationPopup>(AccessibleUIElementTag.ConfirmationPopup)
+            .Show(
+                "Are you sure you want to delete the current level? This action cannot be undone.",
+                () =>
+                {
+                    if (LevelFileHelpers.TryDeleteLevel(CurrentLevel.LevelName))
+                    {
+                        CurrentLevel = GameLevelData.CreateGeneric();
+                        GridManager.Instance.GenerateEmptyGrid();
+                        HasUnsavedChanges = false;
+
+                        UIManager.Instance
+                            .GetUIElement<InformationPopup>(AccessibleUIElementTag.InformationPopup)
+                            .Show("Level deleted successfully", null);
+                    }
+                    else
+                    {
+                        Debug.LogError("Failed to delete the level file.");
+                    }
+                },
+                null,
+                new PopupStyle
+                {
+                    ConfirmButtonText = "Delete",
+                    CancelButtonText = "Cancel"
+                }
+            );
     }
 }

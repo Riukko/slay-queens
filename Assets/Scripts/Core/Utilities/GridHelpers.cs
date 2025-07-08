@@ -48,7 +48,7 @@ public static class GridHelpers
         return neighbors;
     }
 
-    public static bool AreOnTheSameRow(Vector2Int a, Vector2Int b) =>  a.y == b.y;
+    public static bool AreOnTheSameRow(Vector2Int a, Vector2Int b) => a.y == b.y;
 
     public static bool AreOnTheSameColumn(Vector2Int a, Vector2Int b) => a.x == b.x;
 

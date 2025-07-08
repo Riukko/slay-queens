@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class UIManager : Singleton<UIManager>
@@ -27,4 +28,8 @@ public class UIManager : Singleton<UIManager>
             return null;
         }
     }
+
+    public void ShowInfo(string message, PopupStyle? style = null) =>  GetUIElement<InformationPopup>(AccessibleUIElementTag.InformationPopup).Show(message, null, style);
+
+    public async Task<bool> ShowInfoAsync(string message, PopupStyle? style = null) => await GetUIElement<InformationPopup>(AccessibleUIElementTag.InformationPopup).ShowAsync(message, style);
 }

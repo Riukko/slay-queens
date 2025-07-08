@@ -1,7 +1,6 @@
 ﻿using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEngine.Rendering.DebugUI;
 
 public class LevelOptionsView : MonoBehaviour
 {
@@ -26,7 +25,7 @@ public class LevelOptionsView : MonoBehaviour
 
     public void UpdateSliderValue(int newSize)
     {
-        sizeSlider.value = newSize;
+        sizeSlider.SetValueWithoutNotify(newSize);
         sizeValueText.text = newSize.ToString();
     }
 }

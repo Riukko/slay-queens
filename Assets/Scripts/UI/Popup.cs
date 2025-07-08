@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,32 +17,46 @@ public abstract class Popup : AccessibleUIElement
     [SerializeField] protected Color popupDefaultBackgroundColor;
 
     protected Action onConfirmCallback;
+    protected TaskCompletionSource<bool> tcs;
 
-    public virtual void Show(
-        string message,
-        Action onConfirm,
-        PopupStyle? style = null)
+    public virtual void Show(string message, Action onConfirm, PopupStyle? style = null)
     {
+        SetupPopupBase(message, style);
         onConfirmCallback = onConfirm;
-
-        var s = style ?? default;
-
-        popupMessage.text = message;
-        confirmButtonText.text = string.IsNullOrEmpty(s.ConfirmButtonText) ? "OK" : s.ConfirmButtonText;
-
-        confirmButtonText.color = s.ButtonTextColor ?? btnDefaultTxtColor;
-        confirmButtonImg.color = s.ConfirmButtonColor ?? confirmBtnDefaultColor;
-        popupBackground.color = s.BackgroundColor ?? popupDefaultBackgroundColor;
-
         gameObject.SetActive(true);
     }
 
-    public void OnClickConfirm()
+    public virtual Task<bool> ShowAsync(string message, PopupStyle? style = null)
+    {
+        tcs = new TaskCompletionSource<bool>();
+        SetupPopupBase(message, style);
+        gameObject.SetActive(true);
+        return tcs.Task;
+    }
+
+    protected virtual void SetupPopupBase(string message, PopupStyle? style)
+    {
+        var s = style ?? default;
+
+        popupMessage.text = message;
+
+        confirmButtonText.text = string.IsNullOrEmpty(s.ConfirmButtonText) ? "OK" : s.ConfirmButtonText;
+        confirmButtonText.color = s.ButtonTextColor ?? btnDefaultTxtColor;
+        confirmButtonImg.color = s.ConfirmButtonColor ?? confirmBtnDefaultColor;
+        popupBackground.color = s.BackgroundColor ?? popupDefaultBackgroundColor;
+    }
+
+    public virtual void OnClickConfirm()
     {
         onConfirmCallback?.Invoke();
+        tcs?.TrySetResult(true);
         gameObject.SetActive(false);
     }
 }
+
+
+
+
 
 public struct PopupStyle
 {

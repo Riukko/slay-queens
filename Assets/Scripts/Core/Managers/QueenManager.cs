@@ -12,7 +12,7 @@ public class QueenManager : Singleton<QueenManager>
     {
         Queens.Add(queenToAdd);
 
-        if(updateConflicts)
+        if (updateConflicts)
             UpdateQueenConflicts(queenToAdd);
 
         OnQueenAddedEvent?.Invoke(queenToAdd);
@@ -24,7 +24,7 @@ public class QueenManager : Singleton<QueenManager>
 
         if (updateConflicts)
         {
-           foreach (Queen queen in Queens)
+            foreach (Queen queen in Queens)
             {
                 queen.RemoveConflict(queenToRemove);
             }

@@ -49,33 +49,56 @@ public static class LevelFileHelpers
 
         if (!string.IsNullOrEmpty(oldName) && saveResult)
         {
-            string oldFilePath = GetLevelFilePathFromName(oldName);
-            if (File.Exists(oldFilePath))
-            {
-                File.Delete(oldFilePath);
-
-                //Also delete .meta file
-                string metaFilePath = oldFilePath + ".meta";
-                if (File.Exists(metaFilePath))
-                {
-                    File.Delete(metaFilePath);
-                }
-                else
-                {
-                    Debug.LogError($"Couldn't find file meta file {metaFilePath}, couldn't delete it");
-                    return false;
-                }
-
-                Debug.Log($"Deleted old level file and meta: {oldFilePath}");
-            }
-            else
-            {
-                Debug.LogError($"Couldn't find file {oldFilePath}, couldn't delete it");
-                return false;
-            }
+            TryDeleteLevel(oldName);
         }
 
         return saveResult;
+    }
+
+    public static bool TryDeleteLevel(string levelFileName)
+    {
+        string levelFilePath = GetLevelFilePathFromName(levelFileName);
+        if (File.Exists(levelFilePath))
+        {
+
+            try
+            {
+                File.Delete(levelFilePath);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"Couldn't delete file {levelFilePath}, because of exception : {ex.Message}");
+                return false;
+            }
+
+            //Also delete .meta file
+            string metaFilePath = levelFilePath + ".meta";
+            if (File.Exists(metaFilePath))
+            {
+                try
+                {
+                    File.Delete(metaFilePath);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"Couldn't delete file meta {metaFilePath}, because of exception : {ex.Message}");
+                    return false;
+                }
+
+                Debug.Log($"Deleted level file and meta: {levelFilePath}");
+                return true;
+            }
+            else
+            {
+                Debug.LogError($"Couldn't find file meta file {levelFilePath}, couldn't delete it");
+                return true;
+            }
+        }
+        else
+        {
+            Debug.LogError($"Couldn't find file {levelFileName}, couldn't delete it");
+            return false;
+        }
     }
 
     public static int[,] ExtractGridDataTable(Cell[,] cellTable)
