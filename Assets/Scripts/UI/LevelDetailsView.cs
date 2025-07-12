@@ -17,8 +17,8 @@ public class LevelDetailsView : MonoBehaviour
 
     private void Start()
     {
-        LevelDataManager.Instance.OnCurrentLevelChanged += UpdateLevelDetails;
-        LevelDataManager.Instance.LevelSolvabilityUpdateEvent += SetSolvability;
+        LevelEditorDataManager.Instance.OnCurrentLevelChanged += UpdateLevelDetails;
+        LevelEditorDataManager.Instance.LevelSolvabilityUpdateEvent += SetSolvability;
     }
 
     private void HandleLevelNameInput(string newName)

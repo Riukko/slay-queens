@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class LevelSelectorUI : MonoBehaviour
 {
+    [SerializeField]
+    private bool showSolvableLevelsOnly = false;
 
     [SerializeField]
     private Transform levelListGridContainer;
@@ -29,6 +31,10 @@ public class LevelSelectorUI : MonoBehaviour
 
         foreach (GameLevelData levelData in levelDatalist)
         {
+            if (showSolvableLevelsOnly && !levelData.IsLevelSolvable)
+            {
+                continue;
+            }
             selectableLevelList.Add(CreateSelectableLevelObject(levelData));
         }
     }
@@ -69,10 +75,10 @@ public class LevelSelectorUI : MonoBehaviour
         UIManager.Instance
             .GetUIElement<ConfirmationPopup>(AccessibleUIElementTag.ConfirmationPopup)
             .Show(
-                $"Do you want to load {levelData.LevelName}?" + (LevelDataManager.Instance.HasUnsavedChanges ? "\n(You currently have unsaved changes)" : ""),
+                $"Do you want to load {levelData.LevelName}?" + (LevelEditorDataManager.Instance.HasUnsavedChanges ? "\n(You currently have unsaved changes)" : ""),
                 () =>
                 {
-                    LevelDataManager.Instance.LoadLevelFromData(levelData);
+                    LevelEditorDataManager.Instance.LoadLevelFromData(levelData);
                     gameObject.SetActive(false);
                 },
                 null,

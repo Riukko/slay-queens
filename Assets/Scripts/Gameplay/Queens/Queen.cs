@@ -2,14 +2,14 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
+[Serializable]
 public sealed class Queen
 {
     public Vector2Int Coordinates;
 
-    private HashSet<Queen> conflicts = new();
-
-    public HashSet<Queen> Conflicts => conflicts;
+    [SerializeField]
+    private List<Conflict> conflicts = new ();
+    public List<Conflict> Conflicts => conflicts;
 
     public Queen(Vector2Int coordinates)
     {
@@ -18,15 +18,29 @@ public sealed class Queen
 
     public event Action<bool> OnConflictsChanged;
 
-    public void AddConflict(Queen other)
+    public void AddOrUpdateConflict(Queen other, ConflictType type)
     {
-        if (conflicts.Add(other))
-            OnConflictsChanged?.Invoke(conflicts.Count > 0);
+        var existing = conflicts.Find(c => c.OtherQueen == other);
+
+        if (existing != null)
+        {
+            if (type < existing.Type)
+            {
+                conflicts.Remove(existing);
+                conflicts.Add(new Conflict(other, type));
+                OnConflictsChanged?.Invoke(true);
+            }
+        }
+        else
+        {
+            conflicts.Add(new Conflict(other, type));
+            OnConflictsChanged?.Invoke(true);
+        }
     }
 
     public void RemoveConflict(Queen other)
     {
-        if (conflicts.Remove(other))
-            OnConflictsChanged?.Invoke(conflicts.Count > 0);
+        conflicts.RemoveAll(c => c.OtherQueen == other);
+        OnConflictsChanged?.Invoke(conflicts.Count > 0);
     }
 }

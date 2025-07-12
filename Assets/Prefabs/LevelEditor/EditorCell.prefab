@@ -730,7 +730,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -753,7 +753,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Coordinates: {x: 0, y: 0}
   CellOutlines: {fileID: 215346561306515553}
-  CellGroup: 10
   queenSprite: {fileID: 5203346133472803635}
   ErrorOverlay: {fileID: 7196940364371444133}
 --- !u!114 &6426895972805761360

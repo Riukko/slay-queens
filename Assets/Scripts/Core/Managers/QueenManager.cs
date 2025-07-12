@@ -39,13 +39,25 @@ public class QueenManager : Singleton<QueenManager>
         {
             if (queen == queenToCheck) continue;
 
-            if (GridHelpers.AreOnTheSameColumn(queen.Coordinates, queenToCheck.Coordinates)
-                || GridHelpers.AreOnTheSameRow(queen.Coordinates, queenToCheck.Coordinates)
-                || GridHelpers.AreDirectDiagonalNeighbors(queen.Coordinates, queenToCheck.Coordinates, GridManager.Instance.GridSize)
-                || GridHelpers.HaveSameColor(queen.Coordinates, queenToCheck.Coordinates))
+            if (GridHelpers.HaveSameColor(queen.Coordinates, queenToCheck.Coordinates))
             {
-                queenToCheck.AddConflict(queen);
-                queen.AddConflict(queenToCheck);
+                queenToCheck.AddOrUpdateConflict(queen, ConflictType.Color);
+                queen.AddOrUpdateConflict(queenToCheck, ConflictType.Color);
+            }
+            else if (GridHelpers.AreOnTheSameRow(queen.Coordinates, queenToCheck.Coordinates))
+            {
+                queenToCheck.AddOrUpdateConflict(queen, ConflictType.Row);
+                queen.AddOrUpdateConflict(queenToCheck, ConflictType.Row);
+            }
+            else if(GridHelpers.AreOnTheSameColumn(queen.Coordinates, queenToCheck.Coordinates))
+            {
+                queenToCheck.AddOrUpdateConflict(queen, ConflictType.Column);
+                queen.AddOrUpdateConflict(queenToCheck, ConflictType.Column);
+            }
+            else if (GridHelpers.AreDirectDiagonalNeighbors(queen.Coordinates, queenToCheck.Coordinates, GridManager.Instance.GridSize))
+            {
+                queenToCheck.AddOrUpdateConflict(queen, ConflictType.Color);
+                queen.AddOrUpdateConflict(queenToCheck, ConflictType.Color);
             }
         }
     }
